@@ -15,54 +15,64 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* Portal Styling */
+        /* Portal Styling (The "Ghosty" Look) */
         .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); }
         .active-modal { display: flex; align-items: center; justify-content: center; }
         
         .portal-card {
             background: white; border-radius: 40px; padding: 40px; 
-            width: 90%; max-width: 380px; text-center: center;
+            width: 90%; max-width: 380px; text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05); }
-        #success-toast { transform: translateY(-150%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; }
-        #success-toast.show { transform: translateY(0); }
         
-        .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.4; cursor: pointer; transition: 0.3s; }
-        .nav-active { opacity: 1 !important; transform: translateY(-3px); }
-
+        /* Buy Now Button Style */
         .buy-now-btn {
-            background: #5865F2;
+            background: #ffffff;
+            color: #000000;
+            border: 1.5px solid #000000;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+            font-weight: 800;
+        }
+        .buy-now-btn:hover { background: #000000; color: #ffffff; transform: scale(1.02); }
+
+        /* Card Text Centering */
+        .product-title {
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: -0.02em;
+        }
+        .product-price {
+            font-weight: 600;
+            text-align: center;
+            color: #1a1a1a;
+            margin-top: 4px;
         }
     </style>
 </head>
 <body>
 
-    <div id="success-toast" class="fixed top-6 left-0 right-0 mx-auto w-fit bg-black text-white px-8 py-4 rounded-full font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-2xl">
-        <span id="toast-msg">Success</span>
+    <div id="deleteConfirmModal" class="modal">
+        <div class="portal-card">
+            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">⚠️</div>
+            <h2 class="text-xl font-black italic uppercase mb-2">Delete Product?</h2>
+            <p class="text-[10px] font-bold opacity-40 uppercase mb-8 leading-relaxed">Ghosty Security: This action is permanent.<br>The item will be removed from inventory.</p>
+            <input type="hidden" id="delete-target-id">
+            <button onclick="executeDelete()" class="w-full bg-red-500 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] mb-3">Delete Forever</button>
+            <button onclick="closeModal('deleteConfirmModal')" class="w-full bg-gray-100 text-black py-4 rounded-2xl font-black text-[10px] uppercase">Cancel</button>
+        </div>
     </div>
 
     <div id="adminAuthModal" class="modal">
-        <div class="portal-card text-center">
+        <div class="portal-card">
             <h2 class="text-xl font-black italic uppercase mb-2">Staff Access</h2>
             <p class="text-[9px] font-bold opacity-40 uppercase mb-8 tracking-widest">GHOSTY DEVELOPER SECURE PORTAL</p>
             <input type="password" id="admin-pass-input" placeholder="ENTER PASSWORD" class="w-full p-5 rounded-2xl mb-6 text-center text-sm font-black bg-gray-50 border-2 border-transparent focus:border-blue-500 outline-none">
             <button onclick="verifyAdmin()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em]">Unlock</button>
             <button onclick="closeModal('adminAuthModal')" class="mt-6 text-[9px] font-black uppercase opacity-30 cursor-pointer">Close</button>
-        </div>
-    </div>
-
-    <div id="deleteConfirmModal" class="modal">
-        <div class="portal-card text-center">
-            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🗑️</div>
-            <h2 class="text-xl font-black italic uppercase mb-2">Delete Item?</h2>
-            <p class="text-[10px] font-bold opacity-40 uppercase mb-8 leading-relaxed">This action is permanent.<br>The product will be removed from SMILE MC.</p>
-            <input type="hidden" id="delete-target-id">
-            <button onclick="executeDelete()" class="w-full bg-red-500 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] mb-3">Confirm Delete</button>
-            <button onclick="closeModal('deleteConfirmModal')" class="w-full bg-gray-100 text-black py-4 rounded-2xl font-black text-[10px] uppercase">Keep Product</button>
         </div>
     </div>
 
@@ -72,10 +82,7 @@
 
     <main class="px-6 md:px-12 max-w-7xl mx-auto">
         <section id="page-home">
-            <div class="mb-8 max-w-2xl mx-auto">
-                <input type="text" id="user-search" oninput="searchProducts()" placeholder="SEARCH SMILE MC COLLECTION..." class="w-full p-5 bg-white border rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest outline-none shadow-sm focus:ring-2 ring-blue-100 transition-all">
-            </div>
-            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"></div>
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4"></div>
         </section>
 
         <section id="page-admin" class="hidden">
@@ -94,10 +101,9 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="lg:col-span-2 space-y-4">
                     <h3 class="font-black text-[10px] uppercase italic text-gray-400">Inventory</h3>
-                    <div id="admin-inventory-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                    <div id="admin-inventory-list" class="grid grid-cols-1 gap-3"></div>
                 </div>
             </div>
         </section>
@@ -124,18 +130,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const DISCORD_LINK = "https://discord.gg/r6t7JjAwTA";
-        
         let allProducts = [];
 
-        // LOGIN
         window.verifyAdmin = () => {
             if (document.getElementById('admin-pass-input').value === "GHOSTYDEVELOPER") {
                 closeModal('adminAuthModal');
                 showPage('admin');
-            } else alert("ACCESS DENIED");
+            } else alert("WRONG PASSWORD");
         };
 
-        // NEW CUSTOM DELETE PORTAL LOGIC
+        // CUSTOM DELETE LOGIC
         window.askDelete = (id) => {
             document.getElementById('delete-target-id').value = id;
             openModal('deleteConfirmModal');
@@ -146,33 +150,23 @@
             if(id) {
                 await deleteDoc(doc(db, 'products', id));
                 closeModal('deleteConfirmModal');
-                showToast("Product Deleted 🗑️");
             }
         };
 
-        // RENDER LOGIC
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
             allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            renderStore(allProducts);
+            renderStore();
             renderInventoryList();
         });
 
-        window.searchProducts = () => {
-            const term = document.getElementById('user-search').value.toLowerCase();
-            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
-            renderStore(filtered);
-        };
-
-        function renderStore(data) {
-            document.getElementById('product-grid').innerHTML = data.map(p => `
-                <div class="bg-white rounded-[25px] md:rounded-[40px] border border-gray-100 overflow-hidden flex flex-col h-full shadow-sm">
-                    <img src="${p.image}" class="aspect-[4/5] object-cover w-full">
-                    <div class="p-4 md:p-6 flex flex-col flex-1">
-                        <h4 class="text-[11px] md:text-sm font-black uppercase mb-1 truncate">${p.name}</h4>
-                        <div class="mt-auto flex items-center justify-between pt-2">
-                            <p class="text-xs md:text-lg font-black">Rs. ${p.price}</p>
-                            <a href="${DISCORD_LINK}" target="_blank" class="buy-now-btn text-white px-4 md:px-6 py-2 md:py-3 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-wider">Buy Now !</a>
-                        </div>
+        function renderStore() {
+            document.getElementById('product-grid').innerHTML = allProducts.map(p => `
+                <div class="bg-white rounded-3xl overflow-hidden flex flex-col h-full border border-gray-50">
+                    <img src="${p.image}" class="aspect-square object-cover w-full">
+                    <div class="p-4 flex flex-col flex-1">
+                        <h4 class="product-title">${p.name}</h4>
+                        <p class="product-price text-sm">Rs.${p.price} PKR</p>
+                        <a href="${DISCORD_LINK}" target="_blank" class="buy-now-btn w-full mt-4 py-3 rounded-xl text-[10px] uppercase text-center">Buy Now !</a>
                     </div>
                 </div>
             `).join('');
@@ -184,9 +178,8 @@
                   editId = document.getElementById('edit-product-id').value;
 
             if(!name || !price) return alert("Fill Name/Price");
-            showToast("Processing...");
-
             let imgUrl = editId ? allProducts.find(x => x.id === editId).image : "";
+
             if(file) {
                 const fd = new FormData(); fd.append("image", file);
                 const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
@@ -197,37 +190,14 @@
             if(editId) { await updateDoc(doc(db, "products", editId), payload); cancelEdit(); }
             else { payload.createdAt = serverTimestamp(); await addDoc(collection(db, "products"), payload); }
             
-            showToast("Success! ✨");
-            document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; 
-            document.getElementById('p-desc').value = ''; document.getElementById('p-file').value = '';
-        };
-
-        window.editProduct = (id) => {
-            const p = allProducts.find(x => x.id === id);
-            document.getElementById('edit-product-id').value = p.id;
-            document.getElementById('p-name').value = p.name;
-            document.getElementById('p-price').value = p.price;
-            document.getElementById('p-desc').value = p.description || '';
-            document.getElementById('form-header').innerText = "Edit Product ✏️";
-            document.getElementById('publish-btn').innerText = "Update Product";
-            document.getElementById('cancel-edit-btn').classList.remove('hidden');
-        };
-
-        window.cancelEdit = () => {
-            document.getElementById('edit-product-id').value = '';
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-price').value = '';
-            document.getElementById('p-desc').value = '';
-            document.getElementById('form-header').innerText = "Product Manager 🛠️";
-            document.getElementById('publish-btn').innerText = "Post Product";
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
+            document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; document.getElementById('p-file').value = '';
         };
 
         function renderInventoryList() {
             document.getElementById('admin-inventory-list').innerHTML = allProducts.map(p => `
-                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border shadow-sm">
+                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border">
                     <img src="${p.image}" class="w-12 h-12 rounded-xl object-cover">
-                    <div class="flex-1 text-[10px] font-black truncate">${p.name}</div>
+                    <div class="flex-1 text-[10px] font-black truncate uppercase">${p.name}</div>
                     <div class="flex gap-4 px-2">
                         <button onclick="editProduct('${p.id}')" class="text-blue-500 font-bold text-[10px]">EDIT</button>
                         <button onclick="askDelete('${p.id}')" class="text-red-500 font-bold text-[10px]">DEL</button>
@@ -239,15 +209,10 @@
         window.showPage = id => {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(`page-${id}`).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('nav-active'));
-            if(id === 'home') document.getElementById('nav-home').classList.add('nav-active');
-            if(id === 'admin') document.getElementById('nav-staff').classList.add('nav-active');
-            window.scrollTo(0,0);
         };
 
         window.openModal = (id) => document.getElementById(id).classList.add('active-modal');
         window.closeModal = (id) => document.getElementById(id).classList.remove('active-modal');
-        function showToast(msg) { const t = document.getElementById('success-toast'); document.getElementById('toast-msg').innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
         showPage('home');
     </script>
