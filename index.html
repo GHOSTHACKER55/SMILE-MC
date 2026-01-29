@@ -10,15 +10,9 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfc; color: #1a1a1a; margin: 0; padding-bottom: 100px; }
         
         .brand-logo {
-            font-size: 24px; font-weight: 900; font-style: italic;
+            font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 900; font-style: italic;
             background: linear-gradient(45deg, #00c6ff, #0072ff, #00ffaa);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        .admin-login-glow {
-            background: white; border-radius: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            padding: 40px; width: 90%; max-width: 350px;
         }
 
         .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); }
@@ -31,13 +25,17 @@
         .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.4; cursor: pointer; transition: 0.3s; }
         .nav-active { opacity: 1 !important; transform: translateY(-3px); }
 
-        /* Buy Now Button Pulse Effect */
         .buy-now-btn {
-            background: #5865F2; /* Discord Blue */
+            background: #5865F2;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
         }
         .buy-now-btn:hover { transform: scale(1.05); background: #4752c4; }
+
+        /* Smooth Desktop Transitions */
+        @media (min-width: 1024px) {
+            .product-card:hover { transform: translateY(-5px); }
+        }
     </style>
 </head>
 <body>
@@ -47,36 +45,39 @@
     </div>
 
     <div id="adminAuthModal" class="modal">
-        <div class="admin-login-glow text-center">
-            <h2 class="text-xl font-black italic uppercase mb-2 tracking-tighter">Staff Access</h2>
-            <p class="text-[9px] font-bold opacity-40 uppercase mb-8">Secure Portal</p>
-            <input type="password" id="admin-pass-input" placeholder="ENTER PASSWORD" class="w-full p-5 rounded-2xl mb-6 text-center text-sm font-black bg-gray-50 outline-none border-2 border-transparent focus:border-blue-500 transition-all">
+        <div class="bg-white rounded-[40px] p-10 text-center w-[90%] max-w-sm shadow-2xl">
+            <h2 class="text-xl font-black italic uppercase mb-2">Staff Access</h2>
+            <p class="text-[9px] font-bold opacity-40 uppercase mb-8 tracking-widest">GHOSTY DEVELOPER SECURE PORTAL</p>
+            <input type="password" id="admin-pass-input" placeholder="ENTER PASSWORD" class="w-full p-5 rounded-2xl mb-6 text-center text-sm font-black bg-gray-50 border-2 border-transparent focus:border-blue-500 outline-none">
             <button onclick="verifyAdmin()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em]">Unlock</button>
-            <button onclick="closeAdminModal()" class="mt-6 text-[9px] font-black uppercase opacity-30">Cancel</button>
+            <button onclick="closeAdminModal()" class="mt-6 text-[9px] font-black uppercase opacity-30 cursor-pointer">Close</button>
         </div>
     </div>
 
-    <header class="p-6 flex justify-between items-center sticky top-0 bg-[#fcfcfc]/80 backdrop-blur-md z-50">
+    <header class="p-6 md:px-12 flex justify-between items-center sticky top-0 bg-[#fcfcfc]/80 backdrop-blur-md z-50">
         <h1 class="brand-logo">SMILE MC 💫</h1>
     </header>
 
-    <main class="px-6 max-w-6xl mx-auto">
+    <main class="px-6 md:px-12 max-w-7xl mx-auto">
         <section id="page-home">
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4"></div>
+            <div class="mb-8 max-w-2xl mx-auto">
+                <input type="text" id="user-search" oninput="searchProducts()" placeholder="SEARCH SMILE MC COLLECTION..." class="w-full p-5 bg-white border rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest outline-none shadow-sm focus:ring-2 ring-blue-100 transition-all">
+            </div>
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"></div>
         </section>
 
         <section id="page-admin" class="hidden">
-            <div class="grid lg:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-[40px] border h-fit shadow-sm">
+            <div class="grid lg:grid-cols-3 gap-8 items-start">
+                <div class="bg-white p-8 rounded-[40px] border shadow-sm">
                     <h3 id="form-header" class="font-black text-[10px] uppercase mb-6 italic text-blue-600">Add Product 🛠️</h3>
-                    <div class="space-y-4 mb-8">
+                    <div class="space-y-4">
                         <input type="hidden" id="edit-product-id">
                         <input type="text" id="p-name" placeholder="PRODUCT NAME" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold outline-none border focus:border-blue-400">
                         <input type="number" id="p-price" placeholder="PRICE (RS)" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold outline-none border focus:border-blue-400">
-                        <textarea id="p-desc" placeholder="DESCRIPTION" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold h-20 outline-none border focus:border-blue-400"></textarea>
-                        <input type="file" id="p-file" class="text-[10px] w-full">
-                        <div class="flex gap-2">
-                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase">Post Product</button>
+                        <textarea id="p-desc" placeholder="DESCRIPTION" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold h-24 outline-none border focus:border-blue-400"></textarea>
+                        <input type="file" id="p-file" class="text-[10px] w-full font-bold">
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase hover:bg-gray-800 transition-all">Post Product</button>
                             <button onclick="cancelEdit()" id="cancel-edit-btn" class="hidden bg-gray-200 text-black px-4 rounded-xl font-black text-[9px] uppercase">Cancel</button>
                         </div>
                     </div>
@@ -84,22 +85,27 @@
 
                 <div class="lg:col-span-2 space-y-4">
                     <h3 class="font-black text-[10px] uppercase italic text-gray-400">Inventory Management</h3>
-                    <div id="admin-inventory-list" class="space-y-3"></div>
+                    <div id="admin-inventory-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                 </div>
             </div>
         </section>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 glass-nav p-5 flex justify-around items-center z-50">
-        <div id="nav-home" onclick="showPage('home')" class="nav-btn nav-active"><span>🏠</span><span class="text-[8px] font-bold uppercase">Home</span></div>
-        <div id="nav-staff" onclick="document.getElementById('adminAuthModal').classList.add('active-modal')" class="nav-btn"><span>🛠️</span><span class="text-[8px] font-bold uppercase">Staff</span></div>
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav p-5 md:p-6 flex justify-around items-center z-50">
+        <div id="nav-home" onclick="showPage('home')" class="nav-btn nav-active">
+            <span class="text-xl">🏠</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase">Home</span>
+        </div>
+        <div id="nav-staff" onclick="document.getElementById('adminAuthModal').classList.add('active-modal')" class="nav-btn">
+            <span class="text-xl">🛠️</span>
+            <span class="text-[8px] md:text-[10px] font-bold uppercase">Staff</span>
+        </div>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Your specific Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyC41Y6mNNBFvjNeHdOOWGsjczMjyaqoqjU",
             authDomain: "fajar-collection-8aba3.firebaseapp.com",
@@ -115,69 +121,70 @@
         
         let allProducts = [];
 
-        // NEW PASSWORD
         window.verifyAdmin = () => {
             if (document.getElementById('admin-pass-input').value === "GHOSTYDEVELOPER") {
                 document.getElementById('adminAuthModal').classList.remove('active-modal');
                 showPage('admin');
             } else {
-                alert("Incorrect Password!");
+                alert("ACCESS DENIED");
             }
         };
 
-        // RENDER PRODUCTS
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
             allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            renderStore();
+            renderStore(allProducts);
             renderInventoryList();
         });
 
-        function renderStore() {
-            document.getElementById('product-grid').innerHTML = allProducts.map(p => `
-                <div class="bg-white rounded-[30px] border border-gray-100 overflow-hidden flex flex-col h-full shadow-sm">
-                    <img src="${p.image}" class="aspect-[4/5] object-cover">
-                    <div class="p-5 flex flex-col h-full">
-                        <h4 class="text-[12px] font-black uppercase mb-1">${p.name}</h4>
-                        <p class="text-[10px] opacity-60 mb-4 line-clamp-2">${p.description || ''}</p>
+        window.searchProducts = () => {
+            const term = document.getElementById('user-search').value.toLowerCase();
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
+            renderStore(filtered);
+        };
+
+        function renderStore(data) {
+            document.getElementById('product-grid').innerHTML = data.map(p => `
+                <div class="product-card bg-white rounded-[25px] md:rounded-[40px] border border-gray-100 overflow-hidden flex flex-col h-full shadow-sm transition-all duration-300">
+                    <img src="${p.image}" class="aspect-[4/5] object-cover w-full">
+                    <div class="p-4 md:p-6 flex flex-col flex-1">
+                        <h4 class="text-[11px] md:text-sm font-black uppercase mb-1 truncate">${p.name}</h4>
+                        <p class="text-[9px] md:text-[11px] opacity-60 mb-4 line-clamp-2 leading-relaxed">${p.description || ''}</p>
                         <div class="mt-auto flex items-center justify-between pt-2">
-                            <p class="text-[14px] font-black">Rs. ${p.price}</p>
-                            <a href="${DISCORD_LINK}" target="_blank" class="buy-now-btn text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider">Buy Now !</a>
+                            <p class="text-xs md:text-lg font-black">Rs. ${p.price}</p>
+                            <a href="${DISCORD_LINK}" target="_blank" class="buy-now-btn text-white px-4 md:px-6 py-2 md:py-3 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-wider">Buy Now !</a>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // ADMIN LOGIC
         window.handlePublish = async () => {
             const name = document.getElementById('p-name').value, price = document.getElementById('p-price').value, 
                   desc = document.getElementById('p-desc').value, file = document.getElementById('p-file').files[0],
                   editId = document.getElementById('edit-product-id').value;
 
-            if(!name || !price) return alert("Please add Name and Price");
-            
-            showToast(editId ? "Updating..." : "Posting...");
-            let imgUrl = editId ? allProducts.find(x => x.id === editId).image : "";
+            if(!name || !price) return alert("Missing Info");
+            showToast(editId ? "Updating..." : "Publishing...");
 
+            let imgUrl = editId ? allProducts.find(x => x.id === editId).image : "";
             if(file) {
                 const fd = new FormData(); fd.append("image", file);
                 const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
                 const d = await r.json(); imgUrl = d.data.url;
             }
 
-            const productData = { name, price, description: desc, image: imgUrl, updatedAt: serverTimestamp() };
-            
+            const payload = { name, price, description: desc, image: imgUrl, updatedAt: serverTimestamp() };
             if(editId) {
-                await updateDoc(doc(db, "products", editId), productData);
+                await updateDoc(doc(db, "products", editId), payload);
                 cancelEdit();
             } else {
-                productData.createdAt = serverTimestamp();
-                await addDoc(collection(db, "products"), productData);
+                payload.createdAt = serverTimestamp();
+                await addDoc(collection(db, "products"), payload);
             }
             
-            showToast("Product Live! 🚀");
-            document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; document.getElementById('p-desc').value = '';
-            document.getElementById('p-file').value = '';
+            showToast("Smile MC Store Updated! ✨");
+            document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; 
+            document.getElementById('p-desc').value = ''; document.getElementById('p-file').value = '';
         };
 
         window.editProduct = (id) => {
@@ -187,7 +194,7 @@
             document.getElementById('p-price').value = p.price;
             document.getElementById('p-desc').value = p.description || '';
             document.getElementById('form-header').innerText = "Edit Mode ✏️";
-            document.getElementById('publish-btn').innerText = "Update Now";
+            document.getElementById('publish-btn').innerText = "Update Product";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
         };
 
@@ -203,12 +210,12 @@
 
         function renderInventoryList() {
             document.getElementById('admin-inventory-list').innerHTML = allProducts.map(p => `
-                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border">
-                    <img src="${p.image}" class="w-10 h-10 rounded-lg object-cover">
-                    <div class="flex-1 text-[9px] font-black truncate">${p.name}</div>
-                    <div class="flex gap-4">
+                <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border">
+                    <img src="${p.image}" class="w-12 h-12 rounded-xl object-cover">
+                    <div class="flex-1 text-[10px] font-black truncate">${p.name}</div>
+                    <div class="flex gap-3">
                         <button onclick="editProduct('${p.id}')" class="text-blue-500 font-bold text-[10px]">EDIT</button>
-                        <button onclick="deleteDoc(doc(db,'products','${p.id}'))" class="text-red-500 font-bold text-[10px]">DEL</button>
+                        <button onclick="if(confirm('Delete?')) deleteDoc(doc(db,'products','${p.id}'))" class="text-red-500 font-bold text-[10px]">DEL</button>
                     </div>
                 </div>
             `).join('');
