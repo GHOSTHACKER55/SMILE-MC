@@ -3,36 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Store</title>
-    <link rel="stylesheet" href="style.css">
+    <title>SMILE MC | Premium 💫</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfc; color: #1a1a1a; margin: 0; padding-bottom: 100px; }
+        
+        .brand-logo {
+            font-size: 24px; font-weight: 900; font-style: italic;
+            background: linear-gradient(45deg, #00c6ff, #0072ff, #00ffaa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .admin-login-glow {
+            background: white; border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            padding: 40px; width: 90%; max-width: 350px;
+        }
+
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); }
+        .active-modal { display: flex; align-items: center; justify-content: center; }
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05); }
+        
+        #success-toast { transform: translateY(-150%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; }
+        #success-toast.show { transform: translateY(0); }
+        
+        .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.4; cursor: pointer; transition: 0.3s; }
+        .nav-active { opacity: 1 !important; transform: translateY(-3px); }
+
+        /* Buy Now Button Pulse Effect */
+        .buy-now-btn {
+            background: #5865F2; /* Discord Blue */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+        }
+        .buy-now-btn:hover { transform: scale(1.05); background: #4752c4; }
+    </style>
 </head>
 <body>
 
-    <div id="client-page">
-        <header>
-            <h1>Our Products</h1>
-            <button onclick="showLogin()" class="admin-btn">Admin Login</button>
-        </header>
-        
-        <div id="product-grid" class="grid">
-            </div>
+    <div id="success-toast" class="fixed top-6 left-0 right-0 mx-auto w-fit bg-black text-white px-8 py-4 rounded-full font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-2xl">
+        <span id="toast-msg">Success</span>
     </div>
 
-    <div id="admin-page" style="display: none;">
-        <header>
-            <h1>Admin Dashboard</h1>
-            <button onclick="logout()" class="admin-btn">Logout</button>
-        </header>
-
-        <div class="form-container">
-            <h3>Add New Product</h3>
-            <input type="text" id="p-title" placeholder="Product Title">
-            <input type="text" id="p-img" placeholder="Image URL (e.g. https://picsum.photos/200)">
-            <textarea id="p-desc" placeholder="Product Description"></textarea>
-            <button onclick="addProduct()">List Product</button>
+    <div id="adminAuthModal" class="modal">
+        <div class="admin-login-glow text-center">
+            <h2 class="text-xl font-black italic uppercase mb-2 tracking-tighter">Staff Access</h2>
+            <p class="text-[9px] font-bold opacity-40 uppercase mb-8">Secure Portal</p>
+            <input type="password" id="admin-pass-input" placeholder="ENTER PASSWORD" class="w-full p-5 rounded-2xl mb-6 text-center text-sm font-black bg-gray-50 outline-none border-2 border-transparent focus:border-blue-500 transition-all">
+            <button onclick="verifyAdmin()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em]">Unlock</button>
+            <button onclick="closeAdminModal()" class="mt-6 text-[9px] font-black uppercase opacity-30">Cancel</button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <header class="p-6 flex justify-between items-center sticky top-0 bg-[#fcfcfc]/80 backdrop-blur-md z-50">
+        <h1 class="brand-logo">SMILE MC 💫</h1>
+    </header>
+
+    <main class="px-6 max-w-6xl mx-auto">
+        <section id="page-home">
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4"></div>
+        </section>
+
+        <section id="page-admin" class="hidden">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-[40px] border h-fit shadow-sm">
+                    <h3 id="form-header" class="font-black text-[10px] uppercase mb-6 italic text-blue-600">Add Product 🛠️</h3>
+                    <div class="space-y-4 mb-8">
+                        <input type="hidden" id="edit-product-id">
+                        <input type="text" id="p-name" placeholder="PRODUCT NAME" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold outline-none border focus:border-blue-400">
+                        <input type="number" id="p-price" placeholder="PRICE (RS)" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold outline-none border focus:border-blue-400">
+                        <textarea id="p-desc" placeholder="DESCRIPTION" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold h-20 outline-none border focus:border-blue-400"></textarea>
+                        <input type="file" id="p-file" class="text-[10px] w-full">
+                        <div class="flex gap-2">
+                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase">Post Product</button>
+                            <button onclick="cancelEdit()" id="cancel-edit-btn" class="hidden bg-gray-200 text-black px-4 rounded-xl font-black text-[9px] uppercase">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-4">
+                    <h3 class="font-black text-[10px] uppercase italic text-gray-400">Inventory Management</h3>
+                    <div id="admin-inventory-list" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav p-5 flex justify-around items-center z-50">
+        <div id="nav-home" onclick="showPage('home')" class="nav-btn nav-active"><span>🏠</span><span class="text-[8px] font-bold uppercase">Home</span></div>
+        <div id="nav-staff" onclick="document.getElementById('adminAuthModal').classList.add('active-modal')" class="nav-btn"><span>🛠️</span><span class="text-[8px] font-bold uppercase">Staff</span></div>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Your specific Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyC41Y6mNNBFvjNeHdOOWGsjczMjyaqoqjU",
+            authDomain: "fajar-collection-8aba3.firebaseapp.com",
+            projectId: "fajar-collection-8aba3",
+            storageBucket: "fajar-collection-8aba3.firebasestorage.app",
+            messagingSenderId: "620336064195",
+            appId: "1:620336064195:web:4608ae5f133de8fa17a476"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const DISCORD_LINK = "https://discord.gg/r6t7JjAwTA";
+        
+        let allProducts = [];
+
+        // NEW PASSWORD
+        window.verifyAdmin = () => {
+            if (document.getElementById('admin-pass-input').value === "GHOSTYDEVELOPER") {
+                document.getElementById('adminAuthModal').classList.remove('active-modal');
+                showPage('admin');
+            } else {
+                alert("Incorrect Password!");
+            }
+        };
+
+        // RENDER PRODUCTS
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+            allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderStore();
+            renderInventoryList();
+        });
+
+        function renderStore() {
+            document.getElementById('product-grid').innerHTML = allProducts.map(p => `
+                <div class="bg-white rounded-[30px] border border-gray-100 overflow-hidden flex flex-col h-full shadow-sm">
+                    <img src="${p.image}" class="aspect-[4/5] object-cover">
+                    <div class="p-5 flex flex-col h-full">
+                        <h4 class="text-[12px] font-black uppercase mb-1">${p.name}</h4>
+                        <p class="text-[10px] opacity-60 mb-4 line-clamp-2">${p.description || ''}</p>
+                        <div class="mt-auto flex items-center justify-between pt-2">
+                            <p class="text-[14px] font-black">Rs. ${p.price}</p>
+                            <a href="${DISCORD_LINK}" target="_blank" class="buy-now-btn text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider">Buy Now !</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ADMIN LOGIC
+        window.handlePublish = async () => {
+            const name = document.getElementById('p-name').value, price = document.getElementById('p-price').value, 
+                  desc = document.getElementById('p-desc').value, file = document.getElementById('p-file').files[0],
+                  editId = document.getElementById('edit-product-id').value;
+
+            if(!name || !price) return alert("Please add Name and Price");
+            
+            showToast(editId ? "Updating..." : "Posting...");
+            let imgUrl = editId ? allProducts.find(x => x.id === editId).image : "";
+
+            if(file) {
+                const fd = new FormData(); fd.append("image", file);
+                const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
+                const d = await r.json(); imgUrl = d.data.url;
+            }
+
+            const productData = { name, price, description: desc, image: imgUrl, updatedAt: serverTimestamp() };
+            
+            if(editId) {
+                await updateDoc(doc(db, "products", editId), productData);
+                cancelEdit();
+            } else {
+                productData.createdAt = serverTimestamp();
+                await addDoc(collection(db, "products"), productData);
+            }
+            
+            showToast("Product Live! 🚀");
+            document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; document.getElementById('p-desc').value = '';
+            document.getElementById('p-file').value = '';
+        };
+
+        window.editProduct = (id) => {
+            const p = allProducts.find(x => x.id === id);
+            document.getElementById('edit-product-id').value = p.id;
+            document.getElementById('p-name').value = p.name;
+            document.getElementById('p-price').value = p.price;
+            document.getElementById('p-desc').value = p.description || '';
+            document.getElementById('form-header').innerText = "Edit Mode ✏️";
+            document.getElementById('publish-btn').innerText = "Update Now";
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+        };
+
+        window.cancelEdit = () => {
+            document.getElementById('edit-product-id').value = '';
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            document.getElementById('p-desc').value = '';
+            document.getElementById('form-header').innerText = "Add Product 🛠️";
+            document.getElementById('publish-btn').innerText = "Post Product";
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        };
+
+        function renderInventoryList() {
+            document.getElementById('admin-inventory-list').innerHTML = allProducts.map(p => `
+                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border">
+                    <img src="${p.image}" class="w-10 h-10 rounded-lg object-cover">
+                    <div class="flex-1 text-[9px] font-black truncate">${p.name}</div>
+                    <div class="flex gap-4">
+                        <button onclick="editProduct('${p.id}')" class="text-blue-500 font-bold text-[10px]">EDIT</button>
+                        <button onclick="deleteDoc(doc(db,'products','${p.id}'))" class="text-red-500 font-bold text-[10px]">DEL</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.showPage = id => {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`page-${id}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('nav-active'));
+            if(id === 'home') document.getElementById('nav-home').classList.add('nav-active');
+            if(id === 'admin') document.getElementById('nav-staff').classList.add('nav-active');
+            window.scrollTo(0,0);
+        };
+
+        window.closeAdminModal = () => document.getElementById('adminAuthModal').classList.remove('active-modal');
+        function showToast(msg) { const t = document.getElementById('success-toast'); document.getElementById('toast-msg').innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+
+        showPage('home');
+    </script>
 </body>
 </html>
