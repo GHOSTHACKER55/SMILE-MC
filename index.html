@@ -15,10 +15,17 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); }
+        /* Portal Styling */
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); }
         .active-modal { display: flex; align-items: center; justify-content: center; }
-        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05); }
         
+        .portal-card {
+            background: white; border-radius: 40px; padding: 40px; 
+            width: 90%; max-width: 380px; text-center: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05); }
         #success-toast { transform: translateY(-150%); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; }
         #success-toast.show { transform: translateY(0); }
         
@@ -30,12 +37,6 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
         }
-        .buy-now-btn:hover { transform: scale(1.05); background: #4752c4; }
-
-        /* Smooth Desktop Transitions */
-        @media (min-width: 1024px) {
-            .product-card:hover { transform: translateY(-5px); }
-        }
     </style>
 </head>
 <body>
@@ -45,12 +46,23 @@
     </div>
 
     <div id="adminAuthModal" class="modal">
-        <div class="bg-white rounded-[40px] p-10 text-center w-[90%] max-w-sm shadow-2xl">
+        <div class="portal-card text-center">
             <h2 class="text-xl font-black italic uppercase mb-2">Staff Access</h2>
             <p class="text-[9px] font-bold opacity-40 uppercase mb-8 tracking-widest">GHOSTY DEVELOPER SECURE PORTAL</p>
             <input type="password" id="admin-pass-input" placeholder="ENTER PASSWORD" class="w-full p-5 rounded-2xl mb-6 text-center text-sm font-black bg-gray-50 border-2 border-transparent focus:border-blue-500 outline-none">
             <button onclick="verifyAdmin()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em]">Unlock</button>
-            <button onclick="closeAdminModal()" class="mt-6 text-[9px] font-black uppercase opacity-30 cursor-pointer">Close</button>
+            <button onclick="closeModal('adminAuthModal')" class="mt-6 text-[9px] font-black uppercase opacity-30 cursor-pointer">Close</button>
+        </div>
+    </div>
+
+    <div id="deleteConfirmModal" class="modal">
+        <div class="portal-card text-center">
+            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🗑️</div>
+            <h2 class="text-xl font-black italic uppercase mb-2">Delete Item?</h2>
+            <p class="text-[10px] font-bold opacity-40 uppercase mb-8 leading-relaxed">This action is permanent.<br>The product will be removed from SMILE MC.</p>
+            <input type="hidden" id="delete-target-id">
+            <button onclick="executeDelete()" class="w-full bg-red-500 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] mb-3">Confirm Delete</button>
+            <button onclick="closeModal('deleteConfirmModal')" class="w-full bg-gray-100 text-black py-4 rounded-2xl font-black text-[10px] uppercase">Keep Product</button>
         </div>
     </div>
 
@@ -69,7 +81,7 @@
         <section id="page-admin" class="hidden">
             <div class="grid lg:grid-cols-3 gap-8 items-start">
                 <div class="bg-white p-8 rounded-[40px] border shadow-sm">
-                    <h3 id="form-header" class="font-black text-[10px] uppercase mb-6 italic text-blue-600">Add Product 🛠️</h3>
+                    <h3 id="form-header" class="font-black text-[10px] uppercase mb-6 italic text-blue-600">Product Manager 🛠️</h3>
                     <div class="space-y-4">
                         <input type="hidden" id="edit-product-id">
                         <input type="text" id="p-name" placeholder="PRODUCT NAME" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold outline-none border focus:border-blue-400">
@@ -77,29 +89,23 @@
                         <textarea id="p-desc" placeholder="DESCRIPTION" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold h-24 outline-none border focus:border-blue-400"></textarea>
                         <input type="file" id="p-file" class="text-[10px] w-full font-bold">
                         <div class="flex gap-2 pt-2">
-                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase hover:bg-gray-800 transition-all">Post Product</button>
+                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase">Post Product</button>
                             <button onclick="cancelEdit()" id="cancel-edit-btn" class="hidden bg-gray-200 text-black px-4 rounded-xl font-black text-[9px] uppercase">Cancel</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-2 space-y-4">
-                    <h3 class="font-black text-[10px] uppercase italic text-gray-400">Inventory Management</h3>
+                    <h3 class="font-black text-[10px] uppercase italic text-gray-400">Inventory</h3>
                     <div id="admin-inventory-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                 </div>
             </div>
         </section>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 glass-nav p-5 md:p-6 flex justify-around items-center z-50">
-        <div id="nav-home" onclick="showPage('home')" class="nav-btn nav-active">
-            <span class="text-xl">🏠</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase">Home</span>
-        </div>
-        <div id="nav-staff" onclick="document.getElementById('adminAuthModal').classList.add('active-modal')" class="nav-btn">
-            <span class="text-xl">🛠️</span>
-            <span class="text-[8px] md:text-[10px] font-bold uppercase">Staff</span>
-        </div>
+    <nav class="fixed bottom-0 left-0 right-0 glass-nav p-5 flex justify-around items-center z-50">
+        <div id="nav-home" onclick="showPage('home')" class="nav-btn nav-active"><span class="text-xl">🏠</span><span class="text-[8px] font-bold uppercase">Home</span></div>
+        <div id="nav-staff" onclick="openModal('adminAuthModal')" class="nav-btn"><span class="text-xl">🛠️</span><span class="text-[8px] font-bold uppercase">Staff</span></div>
     </nav>
 
     <script type="module">
@@ -121,15 +127,30 @@
         
         let allProducts = [];
 
+        // LOGIN
         window.verifyAdmin = () => {
             if (document.getElementById('admin-pass-input').value === "GHOSTYDEVELOPER") {
-                document.getElementById('adminAuthModal').classList.remove('active-modal');
+                closeModal('adminAuthModal');
                 showPage('admin');
-            } else {
-                alert("ACCESS DENIED");
+            } else alert("ACCESS DENIED");
+        };
+
+        // NEW CUSTOM DELETE PORTAL LOGIC
+        window.askDelete = (id) => {
+            document.getElementById('delete-target-id').value = id;
+            openModal('deleteConfirmModal');
+        };
+
+        window.executeDelete = async () => {
+            const id = document.getElementById('delete-target-id').value;
+            if(id) {
+                await deleteDoc(doc(db, 'products', id));
+                closeModal('deleteConfirmModal');
+                showToast("Product Deleted 🗑️");
             }
         };
 
+        // RENDER LOGIC
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
             allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             renderStore(allProducts);
@@ -144,11 +165,10 @@
 
         function renderStore(data) {
             document.getElementById('product-grid').innerHTML = data.map(p => `
-                <div class="product-card bg-white rounded-[25px] md:rounded-[40px] border border-gray-100 overflow-hidden flex flex-col h-full shadow-sm transition-all duration-300">
+                <div class="bg-white rounded-[25px] md:rounded-[40px] border border-gray-100 overflow-hidden flex flex-col h-full shadow-sm">
                     <img src="${p.image}" class="aspect-[4/5] object-cover w-full">
                     <div class="p-4 md:p-6 flex flex-col flex-1">
                         <h4 class="text-[11px] md:text-sm font-black uppercase mb-1 truncate">${p.name}</h4>
-                        <p class="text-[9px] md:text-[11px] opacity-60 mb-4 line-clamp-2 leading-relaxed">${p.description || ''}</p>
                         <div class="mt-auto flex items-center justify-between pt-2">
                             <p class="text-xs md:text-lg font-black">Rs. ${p.price}</p>
                             <a href="${DISCORD_LINK}" target="_blank" class="buy-now-btn text-white px-4 md:px-6 py-2 md:py-3 rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-wider">Buy Now !</a>
@@ -163,8 +183,8 @@
                   desc = document.getElementById('p-desc').value, file = document.getElementById('p-file').files[0],
                   editId = document.getElementById('edit-product-id').value;
 
-            if(!name || !price) return alert("Missing Info");
-            showToast(editId ? "Updating..." : "Publishing...");
+            if(!name || !price) return alert("Fill Name/Price");
+            showToast("Processing...");
 
             let imgUrl = editId ? allProducts.find(x => x.id === editId).image : "";
             if(file) {
@@ -174,15 +194,10 @@
             }
 
             const payload = { name, price, description: desc, image: imgUrl, updatedAt: serverTimestamp() };
-            if(editId) {
-                await updateDoc(doc(db, "products", editId), payload);
-                cancelEdit();
-            } else {
-                payload.createdAt = serverTimestamp();
-                await addDoc(collection(db, "products"), payload);
-            }
+            if(editId) { await updateDoc(doc(db, "products", editId), payload); cancelEdit(); }
+            else { payload.createdAt = serverTimestamp(); await addDoc(collection(db, "products"), payload); }
             
-            showToast("Smile MC Store Updated! ✨");
+            showToast("Success! ✨");
             document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; 
             document.getElementById('p-desc').value = ''; document.getElementById('p-file').value = '';
         };
@@ -193,7 +208,7 @@
             document.getElementById('p-name').value = p.name;
             document.getElementById('p-price').value = p.price;
             document.getElementById('p-desc').value = p.description || '';
-            document.getElementById('form-header').innerText = "Edit Mode ✏️";
+            document.getElementById('form-header').innerText = "Edit Product ✏️";
             document.getElementById('publish-btn').innerText = "Update Product";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
         };
@@ -203,19 +218,19 @@
             document.getElementById('p-name').value = '';
             document.getElementById('p-price').value = '';
             document.getElementById('p-desc').value = '';
-            document.getElementById('form-header').innerText = "Add Product 🛠️";
+            document.getElementById('form-header').innerText = "Product Manager 🛠️";
             document.getElementById('publish-btn').innerText = "Post Product";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
         function renderInventoryList() {
             document.getElementById('admin-inventory-list').innerHTML = allProducts.map(p => `
-                <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border">
+                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border shadow-sm">
                     <img src="${p.image}" class="w-12 h-12 rounded-xl object-cover">
                     <div class="flex-1 text-[10px] font-black truncate">${p.name}</div>
-                    <div class="flex gap-3">
+                    <div class="flex gap-4 px-2">
                         <button onclick="editProduct('${p.id}')" class="text-blue-500 font-bold text-[10px]">EDIT</button>
-                        <button onclick="if(confirm('Delete?')) deleteDoc(doc(db,'products','${p.id}'))" class="text-red-500 font-bold text-[10px]">DEL</button>
+                        <button onclick="askDelete('${p.id}')" class="text-red-500 font-bold text-[10px]">DEL</button>
                     </div>
                 </div>
             `).join('');
@@ -230,7 +245,8 @@
             window.scrollTo(0,0);
         };
 
-        window.closeAdminModal = () => document.getElementById('adminAuthModal').classList.remove('active-modal');
+        window.openModal = (id) => document.getElementById(id).classList.add('active-modal');
+        window.closeModal = (id) => document.getElementById(id).classList.remove('active-modal');
         function showToast(msg) { const t = document.getElementById('success-toast'); document.getElementById('toast-msg').innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
         showPage('home');
