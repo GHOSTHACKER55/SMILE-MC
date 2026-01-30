@@ -10,44 +10,40 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fafafa; color: #000000; margin: 0; padding-bottom: 120px; }
         
         .brand-logo { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1.5px; }
-        
-        /* MODERN MODALS */
-        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); }
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); }
         .active-modal { display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
-        .portal-card { background: white; border-radius: 40px; padding: 40px; width: 95%; max-width: 420px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2); position: relative; max-height: 85vh; overflow-y: auto; }
+        .portal-card { background: white; border-radius: 40px; padding: 40px; width: 95%; max-width: 440px; box-shadow: 0 30px 60px rgba(0,0,0,0.3); position: relative; max-height: 85vh; overflow-y: auto; }
         
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        /* BIG BEAUTIFUL BOLD INPUTS */
+        /* BIG BEAUTIFUL PREMIUM INPUTS */
         .premium-input {
-            border: 3px solid #f0f0f0;
+            border: 3px solid #f2f2f2;
             outline: none;
             border-radius: 24px;
             font-weight: 800;
             background: #fdfdfd;
             width: 100%;
             padding: 22px;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #000;
+            transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
-        .premium-input::placeholder { color: #aaa; font-weight: 800; opacity: 1; }
-        .premium-input:focus { border-color: #000; background: #fff; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .premium-input:focus { border-color: #000; background: #fff; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
 
-        /* STAFF PORTAL STYLE (MATCHING IMAGE) */
-        .staff-input-container { border: 2px solid #3b82f6; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1); }
-        .staff-dots { font-size: 32px; letter-spacing: 12px; text-align: center; width: 100%; border: none; outline: none; }
+        /* ADMIN TAB BUTTONS */
+        .admin-tab-btn { padding: 12px 20px; border-radius: 18px; font-weight: 900; font-size: 10px; text-transform: uppercase; transition: 0.3s; background: #f5f5f5; color: #aaa; }
+        .admin-tab-btn.active { background: #000; color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-        .btn-unlock { background: #000; color: #fff; width: 100%; padding: 20px; border-radius: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; font-size: 14px; transition: all 0.2s; }
-        .btn-unlock:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-auth { background: #000; color: white; padding: 18px; border-radius: 22px; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
+        
+        .nav-pill { background: white; border: 1px solid #eee; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-radius: 40px; }
+        .hidden { display: none !important; }
 
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 450px; }
-        .toast { background: #000; color: #fff; padding: 20px; border-radius: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 15px; animation: slideDown 0.5s ease; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
-        .step-hidden { display: none; }
+        /* ORDER & USER CARDS */
+        .data-card { background: #fff; border: 1px solid #eee; padding: 20px; border-radius: 28px; transition: 0.3s; }
+        .data-card:hover { border-color: #000; transform: translateY(-3px); }
     </style>
 </head>
 <body>
@@ -56,72 +52,32 @@
 
     <div id="staffModal" class="modal">
         <div class="portal-card text-center">
-            <h2 class="text-2xl font-black uppercase italic mb-1 tracking-tighter">STAFF ACCESS</h2>
-            <p class="text-[10px] font-bold opacity-40 uppercase mb-8">Secure Portal</p>
-            
-            <div class="staff-input-container">
-                <input type="password" id="staff-key-input" placeholder="••••••••" class="staff-dots">
+            <h2 class="text-2xl font-black uppercase italic mb-8 tracking-tighter">STAFF ACCESS</h2>
+            <div class="border-2 border-blue-500 rounded-[24px] p-4 mb-6 shadow-lg shadow-blue-100">
+                <input type="password" id="staff-key-input" placeholder="••••••••" class="text-center text-3xl font-black tracking-[15px] outline-none w-full">
             </div>
-            
-            <button onclick="verifyStaff()" class="btn-unlock mb-6">UNLOCK</button>
-            <button onclick="closeModal('staffModal')" class="text-[10px] font-black opacity-30 uppercase tracking-widest">Cancel</button>
+            <button onclick="verifyStaff()" class="btn-auth !bg-black !text-white !py-6 mb-4">UNLOCK ADMIN</button>
+            <button onclick="closeModal('staffModal')" class="text-[10px] font-black opacity-30 uppercase">Cancel</button>
         </div>
     </div>
 
-    <div id="checkoutModal" class="modal">
+    <div id="authModal" class="modal">
         <div class="portal-card">
-            <div id="check-step-1">
-                <div class="flex items-center gap-3 mb-8">
-                    <span class="text-2xl">🟢</span>
-                    <h2 class="text-2xl font-black uppercase tracking-tighter">STEP 1 – CUSTOMER</h2>
-                </div>
-                <input type="text" id="ord-name" placeholder="Full Name" class="premium-input">
-                <input type="text" id="ord-wa" placeholder="WhatsApp Number" class="premium-input">
-                <input type="email" id="ord-mail" placeholder="Gmail Address" class="premium-input">
-                <input type="text" id="ord-discord" placeholder="Discord ID" class="premium-input">
-                <input type="text" id="ord-ign" placeholder="Minecraft IGN" class="premium-input">
-                <button onclick="nextStep(2)" class="w-full bg-black text-white py-6 rounded-[24px] font-black text-[13px] uppercase mt-4 shadow-xl active:scale-95 transition-all">Next: Payment Info</button>
+            <h2 id="auth-title" class="text-2xl font-black uppercase mb-8 tracking-tighter">Create Account</h2>
+            <div id="signup-fields" class="space-y-1">
+                <input type="text" id="reg-name" placeholder="Full Name" class="premium-input">
+                <input type="text" id="reg-phone" placeholder="WhatsApp Number" class="premium-input">
             </div>
-
-            <div id="check-step-2" class="step-hidden text-center">
-                <div class="flex items-center gap-3 mb-8 text-left">
-                    <span class="text-2xl">🟢</span>
-                    <h2 class="text-2xl font-black uppercase tracking-tighter">STEP 2 – PAYMENT</h2>
-                </div>
-                <div class="bg-gray-50 p-8 rounded-[35px] border-2 border-dashed border-gray-200 mb-8 text-left relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-4 opacity-5 text-4xl font-black uppercase">PAY</div>
-                    <p class="text-[10px] font-black opacity-40 uppercase mb-2">My Account</p>
-                    <p class="text-3xl font-black tracking-tighter text-blue-600 mb-1">03106723295</p>
-                    <p class="text-sm font-bold opacity-60">Easypaisa — Tehmina Ahtisham</p>
-                </div>
-                <button onclick="submitOrder()" class="w-full bg-black text-white py-6 rounded-[24px] font-black text-[13px] uppercase shadow-xl">✅ I Have Paid</button>
-                <button onclick="nextStep(1)" class="mt-6 text-[10px] font-black opacity-30 uppercase">Go Back</button>
-            </div>
-
-            <div id="check-step-3" class="step-hidden text-center">
-                <div class="flex items-center justify-center gap-3 mb-8">
-                    <span class="text-2xl">🟢</span>
-                    <h2 class="text-2xl font-black uppercase tracking-tighter">STEP 3 – CONFIRM</h2>
-                </div>
-                <div class="mb-10 p-6 bg-green-50 rounded-[30px]">
-                    <p class="text-[14px] font-black leading-relaxed">If you paid, contact the admin now with your screenshot!</p>
-                </div>
-                <div class="space-y-3">
-                    <a href="https://wa.me/923706116030" target="_blank" class="flex items-center justify-center gap-3 w-full bg-[#25D366] text-white py-5 rounded-[24px] font-black text-[12px] uppercase">
-                        <span>WhatsApp</span> 03706116030
-                    </a>
-                    <div class="flex items-center justify-center gap-3 w-full bg-[#5865F2] text-white py-5 rounded-[24px] font-black text-[12px] uppercase">
-                        <span>Discord</span> frostdragon._.
-                    </div>
-                </div>
-                <button onclick="closeModal('checkoutModal')" class="mt-8 text-[10px] font-black opacity-30 uppercase">Finish</button>
-            </div>
+            <input type="email" id="auth-email" placeholder="Gmail Address" class="premium-input">
+            <input type="password" id="auth-pass" placeholder="Password" class="premium-input">
+            <button onclick="handleAuth()" id="auth-submit-btn" class="btn-auth shadow-xl">Register Now</button>
+            <p onclick="toggleAuthMode()" class="text-[10px] font-bold text-center mt-6 cursor-pointer opacity-40 uppercase">Switch to Login/Register</p>
         </div>
     </div>
 
-    <header class="p-8 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-md z-50">
+    <header class="p-8 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-lg z-50">
         <h1 class="brand-logo">SMILE MC 👑</h1>
-        <div id="visitor-pill" class="bg-gray-100 px-4 py-2 rounded-full text-[10px] font-black uppercase opacity-60">Visitors: <span id="stat-visitors">0</span></div>
+        <div id="user-display" onclick="openAccount()" class="bg-black text-white px-6 py-2 rounded-full text-[10px] font-black uppercase cursor-pointer">Login</div>
     </header>
 
     <main class="p-6 max-w-7xl mx-auto">
@@ -130,33 +86,47 @@
         </section>
 
         <section id="page-admin" class="hidden">
-            <div class="flex items-center justify-between mb-10">
-                <h2 class="text-3xl font-black uppercase tracking-tighter">Staff Panel</h2>
-                <button onclick="showPage('home')" class="bg-gray-100 px-6 py-3 rounded-2xl text-[10px] font-black uppercase">Exit</button>
-            </div>
-            
-            <div class="bg-black p-10 rounded-[45px] text-white mb-10">
-                <h3 class="text-[11px] font-black uppercase mb-8 opacity-40">Add or Edit Product</h3>
-                <input type="text" id="p-name" placeholder="Product Name" class="premium-input mb-4 !text-black">
-                <input type="number" id="p-price" placeholder="Price" class="premium-input mb-6 !text-black">
-                <input type="file" id="p-file" class="block w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-white file:text-black mb-8">
-                <button id="p-save-btn" onclick="handlePublish()" class="w-full bg-white text-black py-6 rounded-[24px] font-black text-[12px] uppercase tracking-widest">Publish Item</button>
+            <div class="bg-black text-white p-8 rounded-[40px] mb-8 flex justify-between items-center">
+                <div>
+                    <p class="text-[10px] font-black opacity-40 uppercase">Total Store Visitors</p>
+                    <h2 id="stat-visitors" class="text-4xl font-black">0</h2>
+                </div>
+                <button onclick="showPage('home')" class="bg-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase">Close Admin</button>
             </div>
 
-            <div id="admin-product-list" class="grid gap-4"></div>
+            <div class="flex gap-2 mb-8 overflow-x-auto no-scrollbar">
+                <button onclick="switchTab('orders')" id="btn-orders" class="admin-tab-btn active">Live Orders</button>
+                <button onclick="switchTab('users')" id="btn-users" class="admin-tab-btn">Accounts</button>
+                <button onclick="switchTab('products')" id="btn-products" class="admin-tab-btn">Manage Products</button>
+            </div>
+
+            <div id="tab-orders" class="admin-section space-y-4"></div>
+
+            <div id="tab-users" class="admin-section hidden grid gap-4"></div>
+
+            <div id="tab-products" class="admin-section hidden">
+                <div class="bg-white p-8 rounded-[35px] border-2 border-black mb-8">
+                    <h4 class="font-black text-[11px] uppercase mb-4">Add / Edit Item</h4>
+                    <input type="text" id="p-name" placeholder="Name" class="premium-input">
+                    <input type="number" id="p-price" placeholder="Price" class="premium-input">
+                    <input type="file" id="p-file" class="mb-4 text-[10px]">
+                    <button id="p-save-btn" onclick="handlePublish()" class="btn-auth">Publish to Store</button>
+                </div>
+                <div id="admin-product-list" class="space-y-3"></div>
+            </div>
         </section>
     </main>
 
-    <nav class="fixed bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-black/90 backdrop-blur-xl text-white rounded-[40px] p-6 flex justify-around items-center z-50 shadow-2xl">
-        <div onclick="showPage('home')" class="cursor-pointer opacity-40 hover:opacity-100 transition-opacity"><span class="text-2xl">🏠</span></div>
-        <div onclick="openAccount()" class="cursor-pointer opacity-40 hover:opacity-100 transition-opacity"><span class="text-2xl">👤</span></div>
-        <div onclick="openModal('staffModal')" class="cursor-pointer opacity-40 hover:opacity-100 transition-opacity"><span class="text-2xl">🛡️</span></div>
+    <nav class="fixed bottom-10 left-1/2 -translate-x-1/2 w-[85%] max-w-md p-6 flex justify-around items-center z-50 nav-pill">
+        <div onclick="showPage('home')" class="text-2xl cursor-pointer">🏠</div>
+        <div onclick="openModal('staffModal')" class="text-2xl cursor-pointer">🛡️</div>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyC41Y6mNNBFvjNeHdOOWGsjczMjyaqoqjU",
             authDomain: "fajar-collection-8aba3.firebaseapp.com",
@@ -168,117 +138,116 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
-        let currentEditingId = null;
+        const auth = getAuth(app);
 
         // VISITOR TRACKING
         async function trackVisitor() {
-            const vDoc = doc(db, "stats", "visitors");
-            await setDoc(vDoc, { count: increment(1) }, { merge: true });
+            await setDoc(doc(db, "stats", "visitors"), { count: increment(1) }, { merge: true });
         }
         trackVisitor();
 
-        onSnapshot(doc(db, "stats", "visitors"), d => { 
-            if(d.exists()) document.getElementById('stat-visitors').innerText = d.data().count; 
-        });
+        // AUTH LOGIC
+        let isSignUp = true;
+        window.toggleAuthMode = () => {
+            isSignUp = !isSignUp;
+            document.getElementById('auth-title').innerText = isSignUp ? "Create Account" : "Sign In";
+            document.getElementById('auth-submit-btn').innerText = isSignUp ? "Register Now" : "Sign In";
+            document.getElementById('signup-fields').classList.toggle('hidden', !isSignUp);
+        };
 
-        // STAFF SYSTEM (MATCHING IMAGE LOGIC)
+        window.handleAuth = async () => {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            try {
+                if(isSignUp) {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), {
+                        name: document.getElementById('reg-name').value,
+                        phone: document.getElementById('reg-phone').value,
+                        email: email,
+                        createdAt: serverTimestamp()
+                    });
+                } else {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                }
+                closeModal('authModal');
+            } catch (e) { alert(e.message); }
+        };
+
+        // ADMIN CONTENT LOADING
+        function loadAdminData() {
+            // Visitors
+            onSnapshot(doc(db, "stats", "visitors"), d => { document.getElementById('stat-visitors').innerText = d.data()?.count || 0; });
+
+            // Orders
+            onSnapshot(query(collection(db, "orders"), orderBy("timestamp", "desc")), snap => {
+                document.getElementById('tab-orders').innerHTML = snap.docs.map(d => `
+                    <div class="data-card border-l-8 border-l-green-500">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-black text-[10px] uppercase">${d.data().product}</span>
+                            <span class="text-[9px] opacity-40">${new Date(d.data().timestamp?.toDate()).toLocaleString()}</span>
+                        </div>
+                        <h4 class="font-black text-lg">${d.data().ign}</h4>
+                        <div class="grid grid-cols-2 gap-2 mt-3">
+                            <p class="text-[9px] font-bold uppercase">Discord: ${d.data().discord}</p>
+                            <p class="text-[9px] font-bold uppercase">WA: ${d.data().wa}</p>
+                        </div>
+                        <button onclick="deleteDoc(doc(db, 'orders', '${d.id}'))" class="mt-4 text-[9px] text-red-500 font-black">MARK AS COMPLETED</button>
+                    </div>
+                `).join('');
+            });
+
+            // Users
+            onSnapshot(collection(db, "users"), snap => {
+                document.getElementById('tab-users').innerHTML = snap.docs.map(d => `
+                    <div class="data-card flex items-center gap-4">
+                        <div class="w-12 h-12 bg-black rounded-2xl flex items-center justify-center text-white font-black">${d.data().name[0]}</div>
+                        <div>
+                            <h4 class="font-black text-[12px] uppercase">${d.data().name}</h4>
+                            <p class="text-[10px] opacity-40">${d.data().email}</p>
+                            <p class="text-[10px] text-blue-600 font-black">${d.data().phone}</p>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        }
+
+        // NAVIGATION & UI
+        window.switchTab = (tab) => {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.getElementById(`btn-${tab}`).classList.add('active');
+        };
+
         window.verifyStaff = () => {
-            const key = document.getElementById('staff-key-input').value;
-            if(key === "GHOSTYDEVELOPER") {
+            if(document.getElementById('staff-key-input').value === "GHOSTYDEVELOPER") {
                 closeModal('staffModal');
                 showPage('admin');
-                notify("ACCESS GRANTED", "Welcome to the Secure Portal");
-            } else {
-                notify("DENIED", "Incorrect Access Key", "error");
-            }
+                loadAdminData();
+            } else { alert("Wrong Key"); }
         };
 
-        // PRODUCT RENDERING & EDITING
-        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
-            const grid = document.getElementById('product-grid');
-            const adminList = document.getElementById('admin-product-list');
-            
-            grid.innerHTML = snap.docs.map(d => `
-                <div class="bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all">
-                    <img src="${d.data().image}" class="w-full aspect-square object-cover">
-                    <div class="p-6">
-                        <p class="text-[10px] font-black uppercase opacity-20 mb-1">${d.data().name}</p>
-                        <p class="text-xl font-black mb-6">Rs.${d.data().price}</p>
-                        <button onclick="startCheckout('${d.data().name}')" class="w-full py-4 bg-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">Buy Now</button>
-                    </div>
-                </div>`).join('');
-
-            adminList.innerHTML = snap.docs.map(d => `
-                <div class="bg-white p-6 rounded-[30px] border flex justify-between items-center shadow-sm">
-                    <div>
-                        <p class="text-[11px] font-black uppercase mb-1">${d.data().name}</p>
-                        <p class="text-sm font-bold opacity-40">Rs.${d.data().price}</p>
-                    </div>
-                    <div class="flex gap-4">
-                        <button onclick="editProduct('${d.id}', '${d.data().name}', '${d.data().price}')" class="text-blue-500 font-black text-[11px] uppercase">Edit</button>
-                        <button onclick="deleteDoc(doc(db, 'products', '${d.id}'))" class="text-red-500 font-black text-[11px] uppercase">Delete</button>
-                    </div>
-                </div>`).join('');
-        });
-
-        window.editProduct = (id, name, price) => {
-            currentEditingId = id;
-            document.getElementById('p-name').value = name;
-            document.getElementById('p-price').value = price;
-            document.getElementById('p-save-btn').innerText = "Update Product";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-
-        window.handlePublish = async () => {
-            const name = document.getElementById('p-name').value;
-            const price = document.getElementById('p-price').value;
-            const file = document.getElementById('p-file').files[0];
-
-            if(currentEditingId) {
-                await updateDoc(doc(db, "products", currentEditingId), { name, price });
-                notify("UPDATED", "Product has been modified");
-                currentEditingId = null;
-                document.getElementById('p-save-btn').innerText = "Publish Item";
-            } else {
-                if(!file) return notify("IMAGE REQUIRED", "Please select a product image", "error");
-                notify("UPLOADING", "Adding your item to store...");
-                const fd = new FormData(); fd.append("image", file);
-                const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
-                const d = await r.json();
-                await addDoc(collection(db, "products"), { name, price, image: d.data.url, createdAt: serverTimestamp() });
-                notify("SUCCESS", "Item is now live!");
-            }
-            document.getElementById('p-name').value = "";
-            document.getElementById('p-price').value = "";
-        };
-
-        // HELPERS
+        // SHARED HELPERS
+        window.openModal = id => document.getElementById(id).classList.add('active-modal');
+        window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
         window.showPage = id => {
             document.getElementById('page-home').classList.toggle('hidden', id !== 'home');
             document.getElementById('page-admin').classList.toggle('hidden', id !== 'admin');
         };
-        window.openModal = id => document.getElementById(id).classList.add('active-modal');
-        window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
-        window.nextStep = s => { [1,2,3].forEach(n => document.getElementById(`check-step-${n}`).classList.add('step-hidden')); document.getElementById(`check-step-${s}`).classList.remove('step-hidden'); };
-        window.startCheckout = p => { window.selectedProduct = p; nextStep(1); openModal('checkoutModal'); };
-        window.submitOrder = async () => {
-            await addDoc(collection(db, "orders"), {
-                product: window.selectedProduct,
-                name: document.getElementById('ord-name').value,
-                ign: document.getElementById('ord-ign').value,
-                timestamp: serverTimestamp()
-            });
-            nextStep(3);
-        };
-        window.notify = (title, msg, type='success') => {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<div>${type==='success'?'✅':'⚠️'}</div><div><h4 class='text-[12px] font-black uppercase'>${title}</h4><p class='text-[10px] font-bold opacity-50'>${msg}</p></div>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
-        };
+        window.openAccount = () => auth.currentUser ? alert("Logged in as " + auth.currentUser.email) : openModal('authModal');
+
+        // PRODUCTS (Home Display)
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+            document.getElementById('product-grid').innerHTML = snap.docs.map(d => `
+                <div class="bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm">
+                    <img src="${d.data().image}" class="w-full aspect-square object-cover">
+                    <div class="p-6">
+                        <p class="text-xl font-black mb-4">Rs.${d.data().price}</p>
+                        <button class="w-full py-4 bg-black text-white rounded-2xl text-[10px] font-black uppercase tracking-widest">Buy Now</button>
+                    </div>
+                </div>`).join('');
+        });
     </script>
 </body>
 </html>
