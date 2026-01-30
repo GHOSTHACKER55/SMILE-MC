@@ -8,128 +8,132 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfc; color: #1a1a1a; margin: 0; padding-bottom: 100px; }
-        
-        .brand-logo {
-            font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 900; font-style: italic;
-            background: linear-gradient(45deg, #00c6ff, #0072ff, #00ffaa);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); }
+        .brand-logo { font-size: 2rem; font-weight: 900; font-style: italic; background: linear-gradient(45deg, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); }
         .active-modal { display: flex; align-items: center; justify-content: center; }
-        
-        .portal-card {
-            background: white; border-radius: 40px; padding: 40px; 
-            width: 90%; max-width: 380px; text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(0,0,0,0.05); }
-        
-        .buy-now-btn {
-            background: #ffffff;
-            color: #000000;
-            border: 1.5px solid #000000;
-            transition: all 0.3s ease;
-            font-weight: 800;
-        }
-        .buy-now-btn:hover { background: #000000; color: #ffffff; transform: scale(1.02); }
-
-        .product-title {
-            font-weight: 800;
-            text-align: center;
-            text-transform: uppercase;
-            font-size: 13px;
-            letter-spacing: -0.02em;
-        }
-        .product-price {
-            font-weight: 600;
-            text-align: center;
-            color: #1a1a1a;
-            margin-top: 4px;
-        }
+        .portal-card { background: white; border-radius: 35px; padding: 30px; width: 95%; max-width: 420px; max-height: 85vh; overflow-y: auto; }
+        .step-hidden { display: none; }
+        .nav-active { color: #2563eb; }
+        input, textarea { border: 1px solid #e5e7eb; outline: none; transition: border 0.2s; }
+        input:focus { border-color: #2563eb; }
     </style>
 </head>
 <body>
 
-    <div id="productDetailModal" class="modal">
-        <div class="portal-card !p-0 overflow-hidden max-w-[400px]">
-            <div class="relative">
-                <img id="detail-img" src="" class="w-full aspect-square object-cover">
-                <button onclick="closeModal('productDetailModal')" class="absolute top-4 right-4 bg-white/80 backdrop-blur-md w-8 h-8 rounded-full font-black text-xs">✕</button>
+    <div id="authModal" class="modal">
+        <div class="portal-card">
+            <h2 id="auth-title" class="text-xl font-black italic uppercase mb-4">Create Account</h2>
+            <div id="signup-fields" class="space-y-3">
+                <input type="text" id="reg-name" placeholder="FULL NAME" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold">
+                <input type="text" id="reg-phone" placeholder="PHONE NUMBER" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold">
             </div>
-            <div class="p-8 text-left">
-                <h2 id="detail-title" class="text-xl font-black italic uppercase mb-1"></h2>
-                <p id="detail-price" class="text-blue-600 font-bold mb-4"></p>
-                <div class="h-[1px] bg-gray-100 w-full mb-4"></div>
-                <p id="detail-desc" class="text-[11px] text-gray-500 font-bold uppercase leading-relaxed mb-6"></p>
-                <a id="detail-link" href="#" target="_blank" class="block w-full bg-black text-white py-4 rounded-2xl font-black text-[10px] uppercase text-center tracking-widest">Buy on Discord</a>
+            <div class="space-y-3 mt-3">
+                <input type="email" id="auth-email" placeholder="GMAIL ADDRESS" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold">
+                <input type="password" id="auth-pass" placeholder="PASSWORD" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold">
+                <input type="password" id="auth-confirm-pass" placeholder="CONFIRM PASSWORD" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold signup-only">
+                <button onclick="handleAuth()" id="auth-submit-btn" class="w-full bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Register Now</button>
+                <p onclick="toggleAuthMode()" id="auth-toggle" class="text-[9px] font-bold text-center cursor-pointer opacity-50 uppercase">Already have an account? Sign In</p>
             </div>
         </div>
     </div>
 
-    <div id="deleteConfirmModal" class="modal">
+    <div id="checkoutModal" class="modal">
         <div class="portal-card">
-            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">⚠️</div>
-            <h2 class="text-xl font-black italic uppercase mb-2">Delete Product?</h2>
-            <p class="text-[10px] font-bold opacity-40 uppercase mb-8 leading-relaxed">Ghosty Security: This action is permanent.</p>
-            <input type="hidden" id="delete-target-id">
-            <button onclick="executeDelete()" class="w-full bg-red-500 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] mb-3">Delete Forever</button>
-            <button onclick="closeModal('deleteConfirmModal')" class="w-full bg-gray-100 text-black py-4 rounded-2xl font-black text-[10px] uppercase">Cancel</button>
+            <div id="check-step-1">
+                <h2 class="text-xl font-black italic uppercase mb-1">Order Info</h2>
+                <p class="text-[9px] font-bold opacity-40 mb-6 uppercase">Fill details to proceed</p>
+                <div class="space-y-3">
+                    <input type="text" id="ord-fullname" placeholder="FULL NAME" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold">
+                    <input type="text" id="ord-discord" placeholder="DISCORD ID" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold">
+                    <input type="text" id="ord-whatsapp" placeholder="WHATSAPP NUMBER" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold">
+                    <input type="text" id="ord-ign" placeholder="MINECRAFT IGN" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold">
+                    <button onclick="nextStep(2)" class="w-full bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Proceed to Payment</button>
+                </div>
+            </div>
+
+            <div id="check-step-2" class="step-hidden">
+                <h2 class="text-xl font-black italic uppercase mb-1">Payment</h2>
+                <div class="bg-blue-600 p-6 rounded-3xl text-white my-6">
+                    <p class="text-[8px] font-bold opacity-80 uppercase">Easypaisa (Tehmina Ahtisham)</p>
+                    <p class="text-xl font-black mt-1">03106723295</p>
+                    <button onclick="navigator.clipboard.writeText('03106723295'); alert('Copied!')" class="mt-3 text-[8px] font-black bg-white/20 px-3 py-1 rounded-lg">COPY NUMBER</button>
+                </div>
+                <button onclick="submitOrder()" class="w-full bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase">I Have Paid</button>
+            </div>
+
+            <div id="check-step-3" class="step-hidden text-center">
+                <div class="text-4xl mb-4">✅</div>
+                <h2 class="text-xl font-black italic uppercase mb-2">Order Placed</h2>
+                <p class="text-[10px] font-bold opacity-60 mb-6">Send screenshot to admin to activate.</p>
+                <div class="space-y-2">
+                    <a href="https://wa.me/923706116030" class="block bg-green-500 text-white py-4 rounded-xl font-black text-[10px] uppercase">WhatsApp Admin</a>
+                    <button onclick="closeModal('checkoutModal')" class="w-full bg-gray-100 py-4 rounded-xl font-black text-[10px] uppercase">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="adminAuthModal" class="modal">
-        <div class="portal-card">
-            <h2 class="text-xl font-black italic uppercase mb-2">Staff Access</h2>
-            <p class="text-[9px] font-bold opacity-40 uppercase mb-8 tracking-widest">GHOSTY DEVELOPER SECURE PORTAL</p>
-            <input type="password" id="admin-pass-input" placeholder="ENTER PASSWORD" class="w-full p-5 rounded-2xl mb-6 text-center text-sm font-black bg-gray-50 border-2 border-transparent focus:border-blue-500 outline-none">
-            <button onclick="verifyAdmin()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em]">Unlock</button>
-            <button onclick="closeModal('adminAuthModal')" class="mt-6 text-[9px] font-black uppercase opacity-30 cursor-pointer">Close</button>
+        <div class="portal-card text-center">
+            <h2 class="text-xl font-black italic mb-6">STAFF ONLY</h2>
+            <input type="password" id="admin-pass-input" placeholder="ENTER KEY" class="w-full p-4 bg-gray-50 rounded-xl text-center font-bold mb-4">
+            <button onclick="verifyAdmin()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-[10px]">UNLOCK PANEL</button>
         </div>
     </div>
 
-    <header class="p-6 md:px-12 flex justify-between items-center sticky top-0 bg-[#fcfcfc]/80 backdrop-blur-md z-50">
+    <header class="p-6 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-40">
         <h1 class="brand-logo">SMILE MC 💫</h1>
+        <div id="user-display" class="text-[9px] font-black uppercase bg-gray-100 px-4 py-2 rounded-full">Guest</div>
     </header>
 
-    <main class="px-6 md:px-12 max-w-7xl mx-auto">
+    <main class="p-6 max-w-7xl mx-auto">
         <section id="page-home">
-            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4"></div>
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
         </section>
 
         <section id="page-admin" class="hidden">
-            <div class="grid lg:grid-cols-3 gap-8 items-start">
-                <div class="bg-white p-8 rounded-[40px] border shadow-sm">
-                    <h3 id="form-header" class="font-black text-[10px] uppercase mb-6 italic text-blue-600">Product Manager 🛠️</h3>
-                    <div class="space-y-4">
-                        <input type="hidden" id="edit-product-id">
-                        <input type="text" id="p-name" placeholder="PRODUCT NAME" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold outline-none border focus:border-blue-400">
-                        <input type="number" id="p-price" placeholder="PRICE (RS)" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold outline-none border focus:border-blue-400">
-                        <textarea id="p-desc" placeholder="DESCRIPTION" class="w-full p-4 bg-gray-50 rounded-xl text-[10px] font-bold h-24 outline-none border focus:border-blue-400"></textarea>
-                        <input type="file" id="p-file" class="text-[10px] w-full font-bold">
-                        <div class="flex gap-2 pt-2">
-                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase">Post Product</button>
-                            <button onclick="cancelEdit()" id="cancel-edit-btn" class="hidden bg-gray-200 text-black px-4 rounded-xl font-black text-[9px] uppercase">Cancel</button>
-                        </div>
-                    </div>
+            <div class="flex gap-4 mb-8 overflow-x-auto pb-2">
+                <button onclick="switchAdminTab('inventory')" class="whitespace-nowrap bg-black text-white px-6 py-3 rounded-full text-[10px] font-black uppercase">Inventory</button>
+                <button onclick="switchAdminTab('orders')" class="whitespace-nowrap bg-gray-100 px-6 py-3 rounded-full text-[10px] font-black uppercase">Orders</button>
+                <button onclick="switchAdminTab('users')" class="whitespace-nowrap bg-gray-100 px-6 py-3 rounded-full text-[10px] font-black uppercase">Accounts</button>
+            </div>
+
+            <div id="admin-stats" class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-blue-50 p-6 rounded-[30px] border border-blue-100">
+                    <p class="text-[9px] font-black uppercase opacity-40">Total Visitors</p>
+                    <h3 id="stat-v" class="text-2xl font-black italic">0</h3>
                 </div>
-                <div class="lg:col-span-2 space-y-4">
-                    <h3 class="font-black text-[10px] uppercase italic text-gray-400">Inventory</h3>
-                    <div id="admin-inventory-list" class="grid grid-cols-1 gap-3"></div>
+                <div class="bg-purple-50 p-6 rounded-[30px] border border-purple-100">
+                    <p class="text-[9px] font-black uppercase opacity-40">Accounts</p>
+                    <h3 id="stat-u" class="text-2xl font-black italic">0</h3>
                 </div>
             </div>
+
+            <div id="tab-inventory" class="admin-tab">
+                <div class="bg-white p-6 rounded-3xl border mb-6">
+                    <input type="text" id="p-name" placeholder="ITEM NAME" class="w-full p-3 mb-2 rounded-lg text-[10px] font-bold">
+                    <input type="number" id="p-price" placeholder="PRICE" class="w-full p-3 mb-2 rounded-lg text-[10px] font-bold">
+                    <input type="file" id="p-file" class="text-[10px] mb-4">
+                    <button onclick="handlePublish()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-[10px]">POST PRODUCT</button>
+                </div>
+                <div id="inventory-list" class="space-y-2"></div>
+            </div>
+
+            <div id="tab-orders" class="admin-tab hidden space-y-3"></div>
+            <div id="tab-users" class="admin-tab hidden space-y-3"></div>
         </section>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 glass-nav p-5 flex justify-around items-center z-50">
-        <div id="nav-home" onclick="showPage('home')" class="nav-btn nav-active cursor-pointer"><span class="text-xl">🏠</span><span class="text-[8px] font-bold uppercase">Home</span></div>
-        <div id="nav-staff" onclick="openModal('adminAuthModal')" class="nav-btn cursor-pointer"><span class="text-xl">🛠️</span><span class="text-[8px] font-bold uppercase">Staff</span></div>
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-around items-center z-50">
+        <button onclick="showPage('home')" class="flex flex-col items-center"><span class="text-xl">🏠</span><span class="text-[8px] font-bold uppercase">Home</span></button>
+        <button onclick="openModal('authModal')" class="flex flex-col items-center"><span class="text-xl">👤</span><span class="text-[8px] font-bold uppercase">Profile</span></button>
+        <button onclick="openModal('adminAuthModal')" class="flex flex-col items-center"><span class="text-xl">⚙️</span><span class="text-[8px] font-bold uppercase">Staff</span></button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, setDoc, getDocs, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC41Y6mNNBFvjNeHdOOWGsjczMjyaqoqjU",
@@ -142,102 +146,158 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const DISCORD_LINK = "https://discord.gg/r6t7JjAwTA";
-        let allProducts = [];
+        const auth = getAuth(app);
 
+        let currentUser = null;
+        let isSignUp = true;
+        let selectedProduct = null;
+
+        // Visitor Count
+        const trackVisit = async () => { await setDoc(doc(db, "stats", "site"), { visitors: increment(1) }, { merge: true }); };
+        trackVisit();
+
+        // AUTH LOGIC
+        window.toggleAuthMode = () => {
+            isSignUp = !isSignUp;
+            document.getElementById('auth-title').innerText = isSignUp ? "Create Account" : "Sign In";
+            document.getElementById('auth-submit-btn').innerText = isSignUp ? "Register Now" : "Sign In";
+            document.querySelectorAll('.signup-only, #signup-fields').forEach(el => el.style.display = isSignUp ? 'block' : 'none');
+        };
+
+        window.handleAuth = async () => {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
+
+            try {
+                if (isSignUp) {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), { name, phone, email, createdAt: serverTimestamp() });
+                    await setDoc(doc(db, "stats", "site"), { accounts: increment(1) }, { merge: true });
+                } else {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                }
+                closeModal('authModal');
+            } catch (e) { alert(e.message); }
+        };
+
+        onAuthStateChanged(auth, user => {
+            currentUser = user;
+            document.getElementById('user-display').innerText = user ? "Logged In" : "Guest";
+        });
+
+        // ORDER LOGIC
+        window.startCheckout = (pName) => {
+            if (!currentUser) return openModal('authModal');
+            selectedProduct = pName;
+            openModal('checkoutModal');
+            nextStep(1);
+        };
+
+        window.submitOrder = async () => {
+            const orderData = {
+                product: selectedProduct,
+                customerName: document.getElementById('ord-fullname').value,
+                discord: document.getElementById('ord-discord').value,
+                whatsapp: document.getElementById('ord-whatsapp').value,
+                ign: document.getElementById('ord-ign').value,
+                timestamp: serverTimestamp(),
+                status: 'Pending'
+            };
+            await addDoc(collection(db, "orders"), orderData);
+            nextStep(3);
+        };
+
+        // ADMIN LOGIC
         window.verifyAdmin = () => {
             if (document.getElementById('admin-pass-input').value === "GHOSTYDEVELOPER") {
                 closeModal('adminAuthModal');
                 showPage('admin');
-            } else alert("WRONG PASSWORD");
+                loadAdminData();
+            } else alert("INVALID KEY");
         };
 
-        window.openProductDetail = (id) => {
-            const p = allProducts.find(item => item.id === id);
-            if(!p) return;
-            document.getElementById('detail-img').src = p.image;
-            document.getElementById('detail-title').innerText = p.name;
-            document.getElementById('detail-price').innerText = `RS.${p.price} PKR`;
-            document.getElementById('detail-desc').innerText = p.description || "NO DESCRIPTION AVAILABLE";
-            document.getElementById('detail-link').href = DISCORD_LINK;
-            openModal('productDetailModal');
-        };
-
-        window.askDelete = (id) => {
-            document.getElementById('delete-target-id').value = id;
-            openModal('deleteConfirmModal');
-        };
-
-        window.executeDelete = async () => {
-            const id = document.getElementById('delete-target-id').value;
-            if(id) {
-                await deleteDoc(doc(db, 'products', id));
-                closeModal('deleteConfirmModal');
-            }
-        };
-
-        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
-            allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            renderStore();
-            renderInventoryList();
-        });
-
-        function renderStore() {
-            document.getElementById('product-grid').innerHTML = allProducts.map(p => `
-                <div onclick="openProductDetail('${p.id}')" class="bg-white rounded-3xl overflow-hidden flex flex-col h-full border border-gray-50 cursor-pointer hover:shadow-sm transition-all">
-                    <img src="${p.image}" class="aspect-square object-cover w-full">
-                    <div class="p-4 flex flex-col flex-1">
-                        <h4 class="product-title">${p.name}</h4>
-                        <p class="product-price text-sm">Rs.${p.price} PKR</p>
-                        <button class="buy-now-btn w-full mt-4 py-3 rounded-xl text-[10px] uppercase text-center">Buy Now !</button>
-                    </div>
-                </div>
-            `).join('');
+        function loadAdminData() {
+            // Stats
+            onSnapshot(doc(db, "stats", "site"), d => {
+                document.getElementById('stat-v').innerText = d.data().visitors;
+                document.getElementById('stat-u').innerText = d.data().accounts;
+            });
+            // Orders
+            onSnapshot(query(collection(db, "orders"), orderBy("timestamp", "desc")), snap => {
+                document.getElementById('tab-orders').innerHTML = snap.docs.map(d => {
+                    const o = d.data();
+                    return `<div class="bg-white p-4 rounded-2xl border text-[10px]">
+                        <p class="font-black text-blue-600 uppercase mb-2">${o.product}</p>
+                        <p><b>NAME:</b> ${o.customerName}</p>
+                        <p><b>IGN:</b> ${o.ign}</p>
+                        <p><b>WA:</b> ${o.whatsapp}</p>
+                        <p><b>DISCORD:</b> ${o.discord}</p>
+                    </div>`;
+                }).join('');
+            });
+            // Accounts
+            onSnapshot(collection(db, "users"), snap => {
+                document.getElementById('tab-users').innerHTML = snap.docs.map(d => {
+                    const u = d.data();
+                    return `<div class="bg-white p-4 rounded-2xl border text-[10px]">
+                        <p class="font-black uppercase">${u.name}</p>
+                        <p class="opacity-60">${u.email}</p>
+                        <p class="font-bold text-blue-500">${u.phone}</p>
+                    </div>`;
+                }).join('');
+            });
         }
 
-        window.handlePublish = async () => {
-            const name = document.getElementById('p-name').value, price = document.getElementById('p-price').value, 
-                  desc = document.getElementById('p-desc').value, file = document.getElementById('p-file').files[0],
-                  editId = document.getElementById('edit-product-id').value;
-
-            if(!name || !price) return alert("Fill Name/Price");
-            let imgUrl = editId ? allProducts.find(x => x.id === editId).image : "";
-
-            if(file) {
-                const fd = new FormData(); fd.append("image", file);
-                const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
-                const d = await r.json(); imgUrl = d.data.url;
-            }
-
-            const payload = { name, price, description: desc, image: imgUrl, updatedAt: serverTimestamp() };
-            if(editId) { await updateDoc(doc(db, "products", editId), payload); cancelEdit(); }
-            else { payload.createdAt = serverTimestamp(); await addDoc(collection(db, "products"), payload); }
-            
-            document.getElementById('p-name').value = ''; document.getElementById('p-price').value = ''; document.getElementById('p-desc').value = ''; document.getElementById('p-file').value = '';
+        // UI HELPERS
+        window.nextStep = (s) => {
+            [1, 2, 3].forEach(n => document.getElementById(`check-step-${n}`).classList.add('step-hidden'));
+            document.getElementById(`check-step-${s}`).classList.remove('step-hidden');
         };
-
-        function renderInventoryList() {
-            document.getElementById('admin-inventory-list').innerHTML = allProducts.map(p => `
-                <div class="flex items-center gap-3 bg-white p-3 rounded-2xl border">
-                    <img src="${p.image}" class="w-12 h-12 rounded-xl object-cover">
-                    <div class="flex-1 text-[10px] font-black truncate uppercase">${p.name}</div>
-                    <div class="flex gap-4 px-2">
-                        <button onclick="event.stopPropagation(); editProduct('${p.id}')" class="text-blue-500 font-bold text-[10px]">EDIT</button>
-                        <button onclick="event.stopPropagation(); askDelete('${p.id}')" class="text-red-500 font-bold text-[10px]">DEL</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
         window.showPage = id => {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(`page-${id}`).classList.remove('hidden');
         };
+        window.openModal = id => document.getElementById(id).classList.add('active-modal');
+        window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
+        window.switchAdminTab = (tab) => {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.add('hidden'));
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+        };
 
-        window.openModal = (id) => document.getElementById(id).classList.add('active-modal');
-        window.closeModal = (id) => document.getElementById(id).classList.remove('active-modal');
+        // RENDER PRODUCTS
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+            document.getElementById('product-grid').innerHTML = snap.docs.map(d => {
+                const p = d.data();
+                return `<div class="bg-white rounded-[30px] overflow-hidden border border-gray-100 flex flex-col">
+                    <img src="${p.image}" class="aspect-square object-cover">
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-[11px] font-black uppercase italic">${p.name}</h4>
+                            <p class="text-sm font-bold text-gray-800">Rs.${p.price}</p>
+                        </div>
+                        <button onclick="startCheckout('${p.name}')" class="w-full mt-3 py-3 border-2 border-black rounded-xl text-[9px] font-black uppercase hover:bg-black hover:text-white transition-all">Buy Now</button>
+                    </div>
+                </div>`;
+            }).join('');
+        });
 
-        showPage('home');
+        // HANDLE PRODUCT PUBLISH
+        window.handlePublish = async () => {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const file = document.getElementById('p-file').files[0];
+            if(!name || !file) return alert("Missing Info");
+
+            const fd = new FormData(); fd.append("image", file);
+            const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
+            const d = await r.json();
+            
+            await addDoc(collection(db, "products"), { name, price, image: d.data.url, createdAt: serverTimestamp() });
+            alert("Product Added!");
+        };
+
     </script>
 </body>
 </html>
