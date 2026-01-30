@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMILE MC | Premium Store 💫</title>
+    <title>SMILE MC | Premium Store 👑</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfc; color: #1a1a1a; margin: 0; padding-bottom: 100px; }
-        .brand-logo { font-size: 1.5rem; font-weight: 900; font-style: italic; background: linear-gradient(45deg, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* NEW BOLD TITLE STYLE */
+        .brand-logo { font-size: 1.7rem; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -1px; background: linear-gradient(45deg, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); }
         .active-modal { display: flex; align-items: center; justify-content: center; }
         .portal-card { background: white; border-radius: 35px; padding: 30px; width: 95%; max-width: 420px; max-height: 90vh; overflow-y: auto; }
         .step-hidden { display: none; }
         input { border: 1.5px solid #f3f4f6; outline: none; transition: all 0.2s; border-radius: 15px; }
         input:focus { border-color: #2563eb; background: white; }
-        .back-btn { display: none; cursor: pointer; }
+        /* PERSISTENT BACK ARROW */
+        .back-arrow-ui { cursor: pointer; font-size: 1.5rem; font-weight: 900; color: #000; padding: 10px; transition: transform 0.2s; }
+        .back-arrow-ui:active { transform: scale(0.8); }
     </style>
 </head>
 <body>
@@ -32,7 +35,7 @@
                 <input type="password" id="auth-pass" placeholder="PASSWORD" class="w-full p-4 bg-gray-50 text-[10px] font-bold">
                 <button onclick="handleAuth()" id="auth-submit-btn" class="w-full bg-black text-white py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest">Register</button>
                 <p onclick="toggleAuthMode()" id="auth-toggle" class="text-[9px] font-black text-center cursor-pointer opacity-40 uppercase mt-4">Sign In Instead</p>
-                <button onclick="closeModal('authModal')" class="w-full text-[8px] font-bold opacity-20 uppercase mt-2">Close</button>
+                <button onclick="closeModal('authModal')" class="w-full text-[8px] font-bold opacity-30 uppercase mt-4">Close Window</button>
             </div>
         </div>
     </div>
@@ -63,7 +66,6 @@
             </div>
             <div id="check-step-3" class="step-hidden text-center py-4">
                 <h2 class="text-2xl font-black italic mb-4 uppercase text-green-500">Order Sent!</h2>
-                <p class="text-[10px] font-bold opacity-60 mb-6 px-4">Your order is now in our system. Send the screenshot to WhatsApp to activate.</p>
                 <a href="https://wa.me/923706116030" target="_blank" class="block w-full bg-green-500 text-white py-4 rounded-2xl font-black text-[10px] uppercase shadow-md">WhatsApp Admin</a>
                 <button onclick="closeModal('checkoutModal')" class="mt-6 text-[9px] font-black opacity-30 uppercase underline">Back to Store</button>
             </div>
@@ -80,9 +82,9 @@
     </div>
 
     <header class="p-6 md:px-12 flex justify-between items-center sticky top-0 bg-white/95 backdrop-blur-md z-50 border-b border-gray-50">
-        <div class="flex items-center gap-4">
-            <div id="global-back" onclick="showPage('home')" class="back-btn text-2xl">←</div>
-            <h1 class="brand-logo">SMILE MC</h1>
+        <div class="flex items-center gap-2">
+            <div onclick="showPage('home')" class="back-arrow-ui">←</div>
+            <h1 class="brand-logo">SMILE MC 👑</h1>
         </div>
         <div id="user-display" class="text-[9px] font-black uppercase bg-gray-100 px-5 py-2 rounded-full tracking-widest">Guest</div>
     </header>
@@ -96,19 +98,19 @@
             <div class="flex gap-2 mb-8 overflow-x-auto pb-4 no-scrollbar">
                 <button onclick="switchAdminTab('inventory')" class="adm-btn bg-black text-white px-8 py-3 rounded-full text-[9px] font-black uppercase shadow-md">Products</button>
                 <button onclick="switchAdminTab('orders')" class="adm-btn bg-gray-100 text-gray-400 px-8 py-3 rounded-full text-[9px] font-black uppercase">Orders</button>
-                <button onclick="switchAdminTab('users')" class="adm-btn bg-gray-100 text-gray-400 px-8 py-3 rounded-full text-[9px] font-black uppercase">Users List</button>
+                <button onclick="switchAdminTab('users')" class="adm-btn bg-gray-100 text-gray-400 px-8 py-3 rounded-full text-[9px] font-black uppercase">Accounts DB</button>
             </div>
 
             <div id="tab-inventory" class="adm-tab">
                 <div id="product-editor" class="bg-white p-8 rounded-[35px] border shadow-sm mb-8">
-                    <h3 id="edit-title" class="text-[10px] font-black mb-6 uppercase text-blue-600 tracking-widest">Add New Product</h3>
+                    <h3 id="edit-title" class="text-[10px] font-black mb-6 uppercase text-blue-600 tracking-widest">Post Item</h3>
                     <input type="hidden" id="edit-id">
                     <div class="grid md:grid-cols-2 gap-4">
-                        <input type="text" id="p-name" placeholder="PRODUCT NAME" class="w-full p-4 bg-gray-50 text-[10px] font-bold">
-                        <input type="number" id="p-price" placeholder="PRICE (RS)" class="w-full p-4 bg-gray-50 text-[10px] font-bold">
+                        <input type="text" id="p-name" placeholder="ITEM NAME" class="w-full p-4 bg-gray-50 text-[10px] font-bold">
+                        <input type="number" id="p-price" placeholder="PRICE" class="w-full p-4 bg-gray-50 text-[10px] font-bold">
                         <input type="file" id="p-file" class="text-[10px] font-bold p-2 bg-gray-50 w-full">
                         <div class="flex gap-2">
-                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white p-4 rounded-2xl font-black text-[10px] uppercase">Post Product</button>
+                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white p-4 rounded-2xl font-black text-[10px] uppercase">Submit</button>
                             <button onclick="cancelEdit()" id="cancel-edit-btn" class="hidden bg-gray-200 text-black px-6 rounded-2xl font-black text-[10px] uppercase">X</button>
                         </div>
                     </div>
@@ -118,14 +120,14 @@
 
             <div id="tab-orders" class="adm-tab hidden space-y-4"></div>
 
-            <div id="tab-users" class="adm-tab hidden grid grid-cols-1 gap-3"></div>
+            <div id="tab-users" class="adm-tab hidden grid grid-cols-1 gap-4"></div>
         </section>
     </main>
 
     <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/95 backdrop-blur-md border shadow-2xl rounded-[40px] p-5 flex justify-around items-center z-50">
-        <div onclick="showPage('home')" class="cursor-pointer text-center group"><span class="block text-xl">🏠</span><p class="text-[8px] font-black uppercase mt-1 opacity-50 group-hover:opacity-100">Store</p></div>
-        <div onclick="openModal('authModal')" class="cursor-pointer text-center group"><span class="block text-xl">👤</span><p class="text-[8px] font-black uppercase mt-1 opacity-50 group-hover:opacity-100">Account</p></div>
-        <div onclick="openModal('adminAuthModal')" class="cursor-pointer text-center group"><span class="block text-xl">🛡️</span><p class="text-[8px] font-black uppercase mt-1 opacity-50 group-hover:opacity-100">Admin</p></div>
+        <div onclick="showPage('home')" class="cursor-pointer text-center group"><span class="block text-xl">🏠</span><p class="text-[8px] font-black uppercase mt-1 opacity-50">Store</p></div>
+        <div onclick="openModal('authModal')" class="cursor-pointer text-center group"><span class="block text-xl">👤</span><p class="text-[8px] font-black uppercase mt-1 opacity-50">Account</p></div>
+        <div onclick="openModal('adminAuthModal')" class="cursor-pointer text-center group"><span class="block text-xl">🛡️</span><p class="text-[8px] font-black uppercase mt-1 opacity-50">Admin</p></div>
     </nav>
 
     <script type="module">
@@ -154,7 +156,7 @@
         // AUTH
         window.toggleAuthMode = () => {
             isSignUp = !isSignUp;
-            document.getElementById('auth-title').innerText = isSignUp ? "Create Account" : "Welcome Back";
+            document.getElementById('auth-title').innerText = isSignUp ? "Create Account" : "Sign In";
             document.getElementById('auth-submit-btn').innerText = isSignUp ? "Register" : "Sign In";
             document.getElementById('signup-fields').style.display = isSignUp ? 'block' : 'none';
         };
@@ -162,176 +164,142 @@
         window.handleAuth = async () => {
             const email = document.getElementById('auth-email').value;
             const pass = document.getElementById('auth-pass').value;
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
+
             try {
                 if (isSignUp) {
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, "users", res.user.uid), { name: document.getElementById('reg-name').value, phone: document.getElementById('reg-phone').value, email, uid: res.user.uid, joined: serverTimestamp() });
+                    // SAVING PASSWORD IN DB FOR ADMIN VIEW
+                    await setDoc(doc(db, "users", res.user.uid), { name, phone, email, password: pass, createdAt: serverTimestamp() });
                 } else { await signInWithEmailAndPassword(auth, email, pass); }
                 closeModal('authModal');
             } catch (e) { alert(e.message); }
         };
 
-        onAuthStateChanged(auth, user => {
-            currentUser = user;
-            document.getElementById('user-display').innerText = user ? "Connected" : "Guest";
-        });
+        onAuthStateChanged(auth, user => { currentUser = user; document.getElementById('user-display').innerText = user ? "Verified" : "Guest"; });
 
-        // PAGE NAVIGATION
-        window.showPage = id => {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`page-${id}`).classList.remove('hidden');
-            document.getElementById('global-back').style.display = (id === 'home') ? 'none' : 'block';
-            window.scrollTo(0,0);
-        };
-
-        // ADMIN FUNCTIONS
+        // ADMIN PANEL
         window.verifyAdmin = () => {
             if (document.getElementById('admin-pass-input').value === "GHOSTYDEVELOPER") {
                 closeModal('adminAuthModal');
                 showPage('admin');
                 loadAdminData();
-            } else alert("Restricted Access");
+            } else alert("Invalid Key");
         };
 
         function loadAdminData() {
-            // Orders
-            onSnapshot(query(collection(db, "orders"), orderBy("timestamp", "desc")), snap => {
-                document.getElementById('tab-orders').innerHTML = snap.docs.map(d => {
-                    const o = d.data();
-                    return `<div class="bg-white p-6 rounded-[30px] border shadow-sm relative">
-                        <button onclick="deleteOrder('${d.id}')" class="absolute top-6 right-6 text-red-500 font-black text-[8px] uppercase tracking-tighter">Delete</button>
-                        <p class="text-blue-600 font-black uppercase text-[10px] mb-3">${o.product}</p>
-                        <div class="grid grid-cols-2 gap-4 text-[9px] font-bold text-gray-500">
-                            <p><b class="text-black">IGN:</b> ${o.ign}</p>
-                            <p><b class="text-black">WA:</b> ${o.wa}</p>
-                            <p class="col-span-2"><b class="text-black">CUSTOM RANK:</b> ${o.rankName}</p>
+            // LOAD USERS WITH PASSWORD VIEW
+            onSnapshot(collection(db, "users"), snap => {
+                document.getElementById('tab-users').innerHTML = snap.docs.map(d => {
+                    const u = d.data();
+                    return `<div class="bg-white p-6 rounded-3xl border border-gray-100 flex flex-col gap-2 relative shadow-sm">
+                        <p class="text-[10px] font-black uppercase text-blue-600">${u.name || 'User'}</p>
+                        <div class="grid grid-cols-1 gap-1 text-[9px] font-bold">
+                            <p><span class="opacity-40">EMAIL:</span> ${u.email}</p>
+                            <p><span class="opacity-40">PHONE:</span> ${u.phone || 'N/A'}</p>
+                            <p class="text-red-500 bg-red-50 p-2 rounded-lg mt-1"><span class="opacity-50">USER PASSWORD:</span> ${u.password}</p>
                         </div>
                     </div>`;
                 }).join('');
             });
 
-            // Full Account Details
-            onSnapshot(collection(db, "users"), snap => {
-                document.getElementById('tab-users').innerHTML = snap.docs.map(d => {
-                    const u = d.data();
-                    return `<div class="bg-white p-6 rounded-3xl border border-gray-100 flex flex-col gap-1">
-                        <p class="text-[10px] font-black uppercase text-blue-600">${u.name || 'No Name'}</p>
-                        <p class="text-[9px] font-bold"><span class="opacity-40">EMAIL:</span> ${u.email}</p>
-                        <p class="text-[9px] font-bold"><span class="opacity-40">PHONE:</span> ${u.phone || 'N/A'}</p>
-                        <p class="text-[7px] opacity-30 mt-2 font-mono">UID: ${u.uid}</p>
+            // LOAD ORDERS
+            onSnapshot(query(collection(db, "orders"), orderBy("timestamp", "desc")), snap => {
+                document.getElementById('tab-orders').innerHTML = snap.docs.map(d => {
+                    const o = d.data();
+                    return `<div class="bg-white p-5 rounded-3xl border relative shadow-sm">
+                        <button onclick="deleteDoc(doc(db, 'orders', '${d.id}'))" class="absolute top-4 right-4 text-[8px] font-black text-red-400">DELETE</button>
+                        <p class="text-blue-600 font-black uppercase text-[10px] mb-2">${o.product}</p>
+                        <p class="text-[9px] font-bold">IGN: ${o.ign} | WA: ${o.wa}</p>
+                        ${o.rankName !== "N/A" ? `<p class="text-[9px] font-black text-green-600 mt-2">RANK: ${o.rankName}</p>` : ''}
                     </div>`;
                 }).join('');
             });
         }
 
-        // PRODUCT EDIT/DELETE/POST
+        // PRODUCT MANAGEMENT
         window.handlePublish = async () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const file = document.getElementById('p-file').files[0];
             const editId = document.getElementById('edit-id').value;
 
-            if(!name || !price) return alert("Fill Name and Price");
-
             if(isEditing) {
                 await updateDoc(doc(db, "products", editId), { name, price });
                 cancelEdit();
-                alert("Updated!");
+                alert("Updated");
             } else {
-                if(!file) return alert("Select an Image");
+                if(!file) return alert("Select Image");
                 const fd = new FormData(); fd.append("image", file);
                 const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
                 const d = await r.json();
                 await addDoc(collection(db, "products"), { name, price, image: d.data.url, createdAt: serverTimestamp() });
-                alert("Live!");
+                alert("Posted");
             }
         };
 
         window.startEdit = (id, name, price) => {
             isEditing = true;
-            document.getElementById('edit-title').innerText = "Edit Product";
-            document.getElementById('publish-btn').innerText = "Update Info";
-            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+            document.getElementById('edit-title').innerText = "Update Item";
             document.getElementById('p-name').value = name;
             document.getElementById('p-price').value = price;
             document.getElementById('edit-id').value = id;
             document.getElementById('p-file').style.display = 'none';
-            window.scrollTo(0,0);
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
         };
 
         window.cancelEdit = () => {
             isEditing = false;
-            document.getElementById('edit-title').innerText = "Add New Product";
-            document.getElementById('publish-btn').innerText = "Post Product";
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-price').value = '';
+            document.getElementById('edit-title').innerText = "Post Item";
             document.getElementById('p-file').style.display = 'block';
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
-        window.deleteProduct = async id => { if(confirm("Permanently remove product?")) await deleteDoc(doc(db, "products", id)); };
-        window.deleteOrder = async id => { if(confirm("Delete Order?")) await deleteDoc(doc(db, "orders", id)); };
-
-        // STORE RENDERING
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
-            const grid = document.getElementById('product-grid');
-            const inv = document.getElementById('inventory-list');
-            
-            const html = snap.docs.map(d => {
+            document.getElementById('product-grid').innerHTML = snap.docs.map(d => {
                 const p = d.data();
                 return `<div class="bg-white rounded-[40px] overflow-hidden border border-gray-100 flex flex-col shadow-sm">
                     <img src="${p.image}" class="aspect-square object-cover">
                     <div class="p-5 flex-1 flex flex-col justify-between">
-                        <div><h4 class="text-[10px] font-black uppercase italic text-gray-400">${p.name}</h4><p class="text-lg font-black text-blue-600">Rs.${p.price}</p></div>
+                        <div><h4 class="text-[10px] font-black uppercase italic opacity-40">${p.name}</h4><p class="text-lg font-black text-blue-600">Rs.${p.price}</p></div>
                         <button onclick="startCheckout('${p.name}')" class="w-full mt-4 py-4 bg-black text-white rounded-2xl text-[9px] font-black uppercase">Buy Now</button>
                     </div>
                 </div>`;
             }).join('');
             
-            const admHtml = snap.docs.map(d => {
+            document.getElementById('inventory-list').innerHTML = snap.docs.map(d => {
                 const p = d.data();
-                return `<div class="bg-white p-4 rounded-2xl border flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <img src="${p.image}" class="w-10 h-10 rounded-lg object-cover">
-                        <div><p class="text-[10px] font-black">${p.name}</p><p class="text-[9px] opacity-50">Rs.${p.price}</p></div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="startEdit('${d.id}','${p.name}','${p.price}')" class="text-blue-500 font-black text-[8px] uppercase">Edit</button>
-                        <button onclick="deleteProduct('${d.id}')" class="text-red-500 font-black text-[8px] uppercase">Del</button>
-                    </div>
+                return `<div class="bg-white p-4 rounded-2xl border flex items-center justify-between shadow-sm">
+                    <p class="text-[10px] font-black">${p.name}</p>
+                    <div class="flex gap-3"><button onclick="startEdit('${d.id}','${p.name}','${p.price}')" class="text-blue-500 font-black text-[8px]">EDIT</button>
+                    <button onclick="deleteDoc(doc(db, 'products', '${d.id}'))" class="text-red-500 font-black text-[8px]">DEL</button></div>
                 </div>`;
             }).join('');
-            
-            grid.innerHTML = html;
-            inv.innerHTML = admHtml;
         });
 
-        // CHECKOUT & MODAL UTILS
+        // UTILITIES
+        window.showPage = id => {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`page-${id}`).classList.remove('hidden');
+            window.scrollTo(0,0);
+        };
         window.startCheckout = (pName) => {
             if (!currentUser) return openModal('authModal');
             selectedProduct = pName;
-            const rankDiv = document.getElementById('custom-rank-container');
-            if(pName.toUpperCase().includes("RANK") || pName.toUpperCase().includes("CUSTOM")) {
-                rankDiv.classList.remove('hidden');
-            } else { rankDiv.classList.add('hidden'); }
+            document.getElementById('custom-rank-container').classList.toggle('hidden', !(pName.toUpperCase().includes("RANK") || pName.toUpperCase().includes("CUSTOM")));
             openModal('checkoutModal');
             nextStep(1);
         };
-
         window.submitOrder = async () => {
-            const order = { product: selectedProduct, ign: document.getElementById('ord-ign').value, wa: document.getElementById('ord-whatsapp').value, rankName: document.getElementById('ord-customrank').value || "N/A", timestamp: serverTimestamp() };
-            await addDoc(collection(db, "orders"), order);
+            await addDoc(collection(db, "orders"), { product: selectedProduct, ign: document.getElementById('ord-ign').value, wa: document.getElementById('ord-whatsapp').value, rankName: document.getElementById('ord-customrank').value || "N/A", timestamp: serverTimestamp() });
             nextStep(3);
         };
-
         window.nextStep = s => { [1,2,3].forEach(n => document.getElementById(`check-step-${n}`).classList.add('step-hidden')); document.getElementById(`check-step-${s}`).classList.remove('step-hidden'); };
         window.openModal = id => document.getElementById(id).classList.add('active-modal');
         window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
-        window.copyText = t => { navigator.clipboard.writeText(t); alert("Copied!"); };
-        window.switchAdminTab = t => { 
-            document.querySelectorAll('.adm-tab').forEach(tab => tab.classList.add('hidden')); 
-            document.getElementById(`tab-${t}`).classList.remove('hidden'); 
-        };
+        window.copyText = t => { navigator.clipboard.writeText(t); alert("Copied"); };
+        window.switchAdminTab = t => { document.querySelectorAll('.adm-tab').forEach(tab => tab.classList.add('hidden')); document.getElementById(`tab-${t}`).classList.remove('hidden'); };
 
         showPage('home');
     </script>
