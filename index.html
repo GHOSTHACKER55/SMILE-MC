@@ -41,7 +41,6 @@
             color: #000; 
         }
 
-        /* STAFF ACCESS UI - MATCHING SCREENSHOT */
         .staff-portal-card {
             background: #ffffff;
             border-radius: 50px;
@@ -159,8 +158,7 @@
             <div id="check-step-3" class="step-hidden text-center py-8">
                 <div class="text-5xl mb-6">✅</div>
                 <h2 class="text-2xl font-black uppercase tracking-tighter mb-4">Order Logged</h2>
-                <p class="text-[11px] font-bold opacity-50 mb-8 leading-relaxed">Your order is saved. Redirecting you to WhatsApp to send payment proof...</p>
-                <div class="animate-pulse text-[10px] font-black text-green-500 uppercase">Wait a moment...</div>
+                <p class="text-[11px] font-bold opacity-50 mb-8 leading-relaxed">Saved to Staff Panel. Redirecting to WhatsApp...</p>
             </div>
         </div>
     </div>
@@ -238,6 +236,18 @@
         let isSignUp = true;
         let selectedProduct = "";
 
+        // DELETE PRODUCT FIX
+        window.removeProduct = async (id) => {
+            if(confirm("Remove this item?")) {
+                await deleteDoc(doc(db, "products", id));
+            }
+        };
+
+        // DELETE ORDER FIX
+        window.removeOrder = async (id) => {
+            await deleteDoc(doc(db, "orders", id));
+        };
+
         window.verifyStaffKey = () => {
             const k = document.getElementById('staff-key-input').value;
             if(k === "GHOSTYDEVELOPER") { closeModal('staffAuthModal'); showPage('admin'); loadAdmin(); document.getElementById('staff-key-input').value = ""; }
@@ -270,30 +280,47 @@
         };
 
         function loadAdmin() {
+            // USERS
             onSnapshot(collection(db, "users"), snap => {
                 document.getElementById('tab-users').innerHTML = snap.docs.map(d => {
                     const u = d.data();
                     return `<div class="bg-[#111] p-6 rounded-3xl border border-[#222]">
                         <p class="text-[11px] font-black text-white mb-1 uppercase">${u.name}</p>
+                        <p class="text-[9px] text-gray-500">EMAIL: ${u.email} | WA: ${u.phone}</p>
                         <p class="text-[10px] font-black text-red-500 mt-2 bg-red-900/20 p-3 rounded-xl inline-block uppercase">Password: ${u.password}</p>
                     </div>`;
                 }).join('');
             });
+            // ORDERS (UPDATED TO SHOW ALL DETAILS)
             onSnapshot(query(collection(db, "orders"), orderBy("timestamp", "desc")), snap => {
                 document.getElementById('tab-orders').innerHTML = snap.docs.map(d => {
                     const o = d.data();
-                    return `<div class="bg-[#111] p-6 rounded-3xl border border-[#222] flex justify-between items-center">
-                        <div><p class="text-[11px] font-black text-blue-400 uppercase">${o.product}</p><p class="text-[9px] text-gray-400">IGN: ${o.ign}</p></div>
-                        <button onclick="deleteDoc(doc(db, 'orders', '${d.id}'))" class="bg-red-900/20 text-red-500 p-3 rounded-xl text-[8px] font-black">DELETE</button>
+                    return `<div class="bg-[#111] p-6 rounded-3xl border border-[#222] flex justify-between items-start">
+                        <div class="space-y-1">
+                            <p class="text-[12px] font-black text-blue-400 uppercase">${o.product}</p>
+                            <p class="text-[10px] font-bold text-white">IGN: ${o.ign}</p>
+                            <p class="text-[9px] text-gray-400">WHATSAPP: ${o.wa}</p>
+                            ${o.rankName !== "N/A" ? `<p class="text-[10px] font-black text-green-400 bg-green-900/10 px-2 py-1 rounded">RANK: ${o.rankName}</p>` : ''}
+                        </div>
+                        <button onclick="removeOrder('${d.id}')" class="bg-red-900/20 text-red-500 p-3 rounded-xl text-[8px] font-black">DELETE</button>
                     </div>`;
                 }).join('');
             });
         }
 
+        // STORE & INVENTORY LIST
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
             document.getElementById('product-grid').innerHTML = snap.docs.map(d => {
                 const p = d.data();
                 return `<div class="bg-[#111] rounded-[35px] border border-[#222] overflow-hidden"><img src="${p.image}" class="w-full aspect-square object-cover"><div class="p-5"><p class="text-[10px] font-black text-white uppercase opacity-30">${p.name}</p><p class="text-xl font-black mb-4 text-white">Rs.${p.price}</p><button onclick="startCheckout('${p.name}')" class="w-full py-4 bg-white text-black rounded-2xl text-[9px] font-black uppercase">Buy Now</button></div></div>`;
+            }).join('');
+
+            document.getElementById('inventory-list').innerHTML = snap.docs.map(d => {
+                const p = d.data();
+                return `<div class="bg-[#111] p-4 rounded-2xl border border-[#222] flex justify-between items-center">
+                    <p class="text-[10px] font-black uppercase text-white">${p.name}</p>
+                    <button onclick="removeProduct('${d.id}')" class="text-red-500 font-black text-[8px]">REMOVE</button>
+                </div>`;
             }).join('');
         });
 
@@ -302,15 +329,12 @@
             const wa = document.getElementById('ord-whatsapp').value;
             const rank = document.getElementById('ord-customrank').value || "N/A";
             
-            // 1. Save to database
             await addDoc(collection(db, "orders"), { 
                 product: selectedProduct, ign, wa, rankName: rank, timestamp: serverTimestamp() 
             });
 
-            // 2. Show success UI
             nextStep(3);
 
-            // 3. Create WhatsApp Message Link
             const text = `👑 *SMILE MC ORDER* 👑%0A%0A` +
                          `*Product:* ${selectedProduct}%0A` +
                          `*IGN:* ${ign}%0A` +
@@ -318,7 +342,6 @@
                          `*WhatsApp:* ${wa}%0A%0A` +
                          `_I have paid. Here is my screenshot:_`;
 
-            // 4. Redirect after 2 seconds
             setTimeout(() => {
                 window.open(`https://wa.me/923706116030?text=${text}`, '_blank');
             }, 2000);
@@ -329,7 +352,13 @@
         window.nextStep = s => { [1,2,3].forEach(n => document.getElementById(`check-step-${n}`).classList.add('step-hidden')); document.getElementById(`check-step-${s}`).classList.remove('step-hidden'); };
         window.openModal = id => document.getElementById(id).classList.add('active-modal');
         window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
-        window.switchAdminTab = t => { document.querySelectorAll('.adm-tab').forEach(tab => tab.classList.add('hidden')); document.getElementById(`tab-${t}`).classList.remove('hidden'); };
+        window.switchAdminTab = t => {
+            document.querySelectorAll('.adm-btn').forEach(b => { b.classList.replace('bg-white', 'bg-[#111]'); b.classList.replace('text-black', 'text-gray-500'); });
+            event.target.classList.replace('bg-[#111]', 'bg-white');
+            event.target.classList.replace('text-gray-500', 'text-black');
+            document.querySelectorAll('.adm-tab').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`tab-${t}`).classList.remove('hidden');
+        };
         window.handlePublish = async () => {
             const file = document.getElementById('p-file').files[0];
             const fd = new FormData(); fd.append("image", file);
