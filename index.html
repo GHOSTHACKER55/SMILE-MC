@@ -4,189 +4,162 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SMILE MC | Dark Store</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
-
-*{box-sizing:border-box}
-
 body{
- margin:0;
- font-family:'Inter',sans-serif;
  background:#0b0b0f;
  color:#fff;
- padding-bottom:110px
+ font-family:Inter,sans-serif;
+ padding-bottom:120px
 }
-
 input{
  background:#14141b;
  border:1px solid #222;
  border-radius:14px;
  padding:14px;
  font-size:12px;
- color:#fff;
- width:100%
+ width:100%;
+ color:#fff
 }
-input::placeholder{color:#6b7280}
-input:focus{outline:none;border-color:#7c7cff}
-
-/* MODAL */
 .modal{
  display:none;
  position:fixed;
  inset:0;
- background:rgba(0,0,0,.85);
+ background:rgba(0,0,0,.9);
  z-index:999;
  align-items:center;
  justify-content:center
 }
 .modal.active{display:flex}
-
 .card{
  background:#14141b;
- border-radius:24px;
  padding:24px;
+ border-radius:24px;
  width:95%;
  max-width:420px
 }
-
 .step{display:none}
 .step.active{display:block}
-
-/* TOAST */
-#toast{
- position:fixed;
- top:20px;
- right:20px;
- z-index:9999
-}
-.toast{
- background:#14141b;
- padding:14px 18px;
- border-radius:14px;
- font-size:11px;
- font-weight:800;
- text-transform:uppercase;
- margin-bottom:10px;
- animation:fade .3s ease
-}
-@keyframes fade{from{opacity:0;transform:translateY(-10px)}to{opacity:1}}
-
 </style>
 </head>
 
 <body>
 
-<div id="toast"></div>
-
-<!-- HEADER -->
-<header class="p-5 flex justify-between items-center sticky top-0 bg-[#0b0b0f] z-50">
- <h1 class="font-black text-xl tracking-tight">SMILE MC</h1>
- <span class="text-xs opacity-40" id="userStatus">Guest</span>
+<header class="p-5 flex justify-between sticky top-0 bg-[#0b0b0f] z-50">
+ <h1 class="font-black text-xl">SMILE MC</h1>
+ <span class="text-xs opacity-40">Store</span>
 </header>
 
-<!-- SEARCH -->
-<div class="px-5 max-w-6xl mx-auto">
+<div class="p-5 max-w-6xl mx-auto">
  <input id="search" placeholder="SEARCH RANK" oninput="filterProducts()"
-  class="mb-8 text-xs uppercase tracking-[3px] font-bold">
+  class="mb-8 uppercase tracking-[3px] text-xs font-black">
 </div>
 
-<!-- PRODUCTS -->
 <main id="products" class="px-5 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-5"></main>
 
 <!-- NAV -->
 <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-[#14141b] rounded-full p-5 flex justify-around text-lg">
- <span onclick="toastMsg('Home')">🏠</span>
- <span onclick="openModal('checkout')">🛒</span>
- <span onclick="toastMsg('Admin Locked')">🛡️</span>
+ <span onclick="toast('Home')">🏠</span>
+ <span onclick="toast('Cart Empty')">🛒</span>
+ <span onclick="openModal('adminLogin')">🛡️</span>
 </nav>
 
 <!-- CHECKOUT -->
 <div id="checkout" class="modal">
  <div class="card">
-
- <!-- STEP 1 -->
- <div class="step active" id="s1">
-  <h2 class="font-black mb-4">Order Details</h2>
-  <input id="n" placeholder="FULL NAME" class="mb-3">
-  <input id="w" placeholder="WHATSAPP NUMBER" class="mb-3">
-  <input id="e" placeholder="GMAIL" class="mb-3">
-  <input id="d" placeholder="DISCORD ID" class="mb-3">
-  <input id="i" placeholder="MINECRAFT IGN" class="mb-5">
-  <button onclick="goStep(2)" class="w-full bg-[#7c7cff] py-4 rounded-xl font-black">
-   NEXT
-  </button>
- </div>
-
- <!-- STEP 2 -->
- <div class="step" id="s2">
-  <h2 class="font-black mb-4">Payment</h2>
-  <div class="bg-black rounded-xl p-4 mb-5 text-center">
-   <p class="text-xs opacity-60">My Account</p>
-   <p class="text-xl font-black">03106723295</p>
-   <p class="text-sm">Easypaisa</p>
-   <p class="font-bold">Tehmina Ahtisham</p>
+  <div class="step active" id="s1">
+   <h2 class="font-black mb-4">Order Details</h2>
+   <input id="n" placeholder="FULL NAME" class="mb-3">
+   <input id="w" placeholder="WHATSAPP NUMBER" class="mb-3">
+   <input id="e" placeholder="GMAIL" class="mb-3">
+   <input id="d" placeholder="DISCORD ID" class="mb-3">
+   <input id="i" placeholder="MINECRAFT IGN" class="mb-5">
+   <button onclick="goStep(2)" class="w-full bg-indigo-500 py-4 rounded-xl font-black">NEXT</button>
   </div>
-  <button onclick="goStep(3)" class="w-full bg-[#7c7cff] py-4 rounded-xl font-black">
-   I HAVE PAID
-  </button>
- </div>
 
- <!-- STEP 3 -->
- <div class="step text-center" id="s3">
-  <div class="text-4xl mb-3">✅</div>
-  <p class="text-sm mb-5 opacity-60">
-   If you have paid, contact admin
-  </p>
+  <div class="step" id="s2">
+   <h2 class="font-black mb-4">Payment</h2>
+   <div class="bg-black p-4 rounded-xl text-center mb-5">
+    <p class="opacity-60 text-xs">My Account</p>
+    <p class="text-xl font-black">03106723295</p>
+    <p>Easypaisa</p>
+    <p class="font-bold">Tehmina Ahtisham</p>
+   </div>
+   <button onclick="goStep(3)" class="w-full bg-indigo-500 py-4 rounded-xl font-black">I HAVE PAID</button>
+  </div>
 
-  <a href="https://wa.me/923706116030" target="_blank"
-   class="block bg-green-600 py-4 rounded-xl font-black mb-3">
-   WhatsApp Admin
-  </a>
-
-  <div class="bg-black py-3 rounded-xl text-xs font-bold">
-   Discord: frostdragon._.
+  <div class="step text-center" id="s3">
+   <div class="text-4xl mb-3">✅</div>
+   <p class="opacity-60 mb-4">If you have paid contact admin</p>
+   <a href="https://wa.me/923706116030" target="_blank"
+    class="block bg-green-600 py-4 rounded-xl font-black mb-3">
+    WhatsApp Admin
+   </a>
+   <div class="bg-black py-3 rounded-xl text-xs font-bold">
+    Discord: frostdragon._.
+   </div>
   </div>
  </div>
+</div>
 
+<!-- ADMIN LOGIN -->
+<div id="adminLogin" class="modal">
+ <div class="card">
+  <h2 class="font-black mb-4">Admin Login</h2>
+  <input id="adminPass" placeholder="ADMIN PASSWORD" type="password" class="mb-4">
+  <button onclick="adminLogin()" class="w-full bg-red-600 py-4 rounded-xl font-black">
+   LOGIN
+  </button>
+ </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="modal">
+ <div class="card">
+  <h2 class="font-black mb-4">Admin Panel</h2>
+  <div id="orders" class="text-xs opacity-70 mb-4">No orders yet</div>
+  <button onclick="closeModal('adminPanel')" class="w-full bg-gray-700 py-3 rounded-xl font-black">
+   CLOSE
+  </button>
  </div>
 </div>
 
 <script>
-const productData=[
- {name:"VIP Rank",price:500},
- {name:"MVP Rank",price:1000},
- {name:"Legend Rank",price:2000},
- {name:"Ultra Rank",price:3000}
+const ADMIN_PASSWORD="admin123";
+
+const productsData=[
+ {name:"VIP Rank",price:500,image:"https://via.placeholder.com/400x400?text=VIP"},
+ {name:"MVP Rank",price:1000,image:"https://via.placeholder.com/400x400?text=MVP"},
+ {name:"Legend Rank",price:2000,image:"https://via.placeholder.com/400x400?text=Legend"},
+ {name:"Ultra Rank",price:3000,image:"https://via.placeholder.com/400x400?text=Ultra"}
 ];
 
-let selected="";
+let selectedProduct="";
 
 function render(list){
- const p=document.getElementById("products");
- p.innerHTML=list.map(x=>`
-  <div class="bg-[#14141b] rounded-2xl overflow-hidden">
-   <div class="p-4">
-    <p class="text-xs opacity-40 font-bold uppercase">${x.name}</p>
-    <p class="text-xl font-black mb-4">Rs. ${x.price}</p>
-    <button onclick="buy('${x.name}')"
-     class="w-full bg-[#7c7cff] py-3 rounded-xl text-xs font-black uppercase">
-     Buy Now
-    </button>
-   </div>
-  </div>`).join("");
+ products.innerHTML=list.map(p=>`
+ <div class="bg-[#14141b] rounded-2xl overflow-hidden">
+  <img src="${p.image}" class="w-full aspect-square object-cover">
+  <div class="p-4">
+   <p class="text-xs opacity-40 font-black uppercase">${p.name}</p>
+   <p class="text-xl font-black mb-4">Rs. ${p.price}</p>
+   <button onclick="buy('${p.name}')"
+    class="w-full bg-indigo-500 py-3 rounded-xl font-black text-xs uppercase">
+    Buy Now
+   </button>
+  </div>
+ </div>`).join("");
 }
-render(productData);
+render(productsData);
 
 function filterProducts(){
  const q=search.value.toLowerCase();
- render(productData.filter(p=>p.name.toLowerCase().includes(q)));
+ render(productsData.filter(p=>p.name.toLowerCase().includes(q)));
 }
 
 function buy(n){
- selected=n;
+ selectedProduct=n;
  openModal('checkout');
  goStep(1);
 }
@@ -194,19 +167,28 @@ function buy(n){
 function goStep(s){
  document.querySelectorAll(".step").forEach(x=>x.classList.remove("active"));
  document.getElementById("s"+s).classList.add("active");
- if(s===3) toastMsg("Order Submitted");
+ if(s===3){
+  orders.innerHTML+=`<div>Order: ${selectedProduct}</div>`;
+ }
 }
 
 function openModal(id){document.getElementById(id).classList.add("active")}
-window.onclick=e=>{if(e.target.classList.contains("modal"))e.target.classList.remove("active")}
+function closeModal(id){document.getElementById(id).classList.remove("active")}
 
-function toastMsg(m){
- const t=document.createElement("div");
- t.className="toast";
- t.innerText=m;
- toast.appendChild(t);
- setTimeout(()=>t.remove(),3000);
+window.onclick=e=>{
+ if(e.target.classList.contains("modal")) e.target.classList.remove("active");
 }
+
+function adminLogin(){
+ if(adminPass.value===ADMIN_PASSWORD){
+  closeModal('adminLogin');
+  openModal('adminPanel');
+ }else{
+  alert("Wrong password");
+ }
+}
+
+function toast(msg){console.log(msg)}
 </script>
 
 </body>
