@@ -8,62 +8,30 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
         
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #ffffff; 
-            color: #000; 
-            margin: 0; 
-            padding-bottom: 120px; 
-            overflow-x: hidden;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; color: #000; margin: 0; padding-bottom: 120px; overflow-x: hidden; }
 
-        /* PREMIUM STAFF PORTAL STYLE (From Screenshot) */
-        .staff-card { 
-            background: white; 
-            border-radius: 50px; 
-            padding: 50px 40px; 
-            width: 95%; 
-            max-width: 420px; 
-            text-align: center; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-            transform: scale(0.9);
-            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
+        /* PREMIUM STAFF PORTAL STYLE */
+        .staff-card { background: white; border-radius: 50px; padding: 50px 40px; width: 95%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
         .staff-title { font-size: 1.8rem; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 5px; }
         .staff-subtitle { font-size: 10px; font-weight: 800; opacity: 0.3; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
-        
-        .staff-input { 
-            width: 100%; padding: 20px; border-radius: 20px; border: 2.5px solid #2563eb; 
-            text-align: center; font-size: 20px; letter-spacing: 8px; color: #2563eb; outline: none;
-            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.2); transition: all 0.3s ease;
-        }
-        
-        .staff-unlock { 
-            width: 100%; background: #000; color: #fff; padding: 22px; border-radius: 22px; 
-            font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 2px;
-            margin-top: 25px; cursor: pointer;
-        }
+        .staff-input { width: 100%; padding: 20px; border-radius: 20px; border: 2.5px solid #2563eb; text-align: center; font-size: 20px; letter-spacing: 8px; color: #2563eb; outline: none; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.2); }
+        .staff-unlock { width: 100%; background: #000; color: #fff; padding: 22px; border-radius: 22px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; margin-top: 25px; }
 
         /* CUSTOM NOTIFICATION POPUP */
-        #custom-alert { 
-            display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
-            z-index: 3000; width: 90%; max-width: 350px; background: #000; color: #fff; 
-            padding: 20px; border-radius: 25px; text-align: center; font-size: 11px; 
-            font-weight: 800; text-transform: uppercase; box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
-        }
+        #custom-alert { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 3000; width: 90%; max-width: 350px; background: #000; color: #fff; padding: 20px; border-radius: 25px; text-align: center; font-size: 11px; font-weight: 800; text-transform: uppercase; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
 
         /* MODALS */
-        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); align-items: center; justify-content: center; }
         .active-modal { display: flex; }
         .portal-card { background: white; border-radius: 40px; padding: 35px; width: 95%; max-width: 400px; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pop { to { transform: scale(1); } }
-
-        input { border: 2px solid #f0f0f0; outline: none; border-radius: 20px; font-weight: 600; transition: 0.2s; }
-        input:focus { border-color: #000; }
+        input { border: 2px solid #f0f0f0; outline: none; border-radius: 20px; font-weight: 600; }
         .pfp-ring { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #000; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* SEARCH BAR */
+        .search-container { margin-bottom: 25px; position: relative; }
+        .search-input { width: 100%; padding: 18px 25px; background: #f8f8f8; border: none; border-radius: 20px; font-size: 12px; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -82,7 +50,7 @@
 
     <div id="authModal" class="modal">
         <div class="portal-card">
-            <h2 id="auth-title" class="text-2xl font-black uppercase mb-6 tracking-tighter text-center">Join Smile MC</h2>
+            <h2 id="auth-title" class="text-2xl font-black uppercase mb-6 text-center">Join Smile MC</h2>
             <div id="signup-fields" class="space-y-3">
                 <input type="text" id="reg-name" placeholder="FULL NAME" class="w-full p-4 bg-gray-50 text-[11px]">
                 <input type="text" id="reg-phone" placeholder="PHONE NUMBER" class="w-full p-4 bg-gray-50 text-[11px]">
@@ -101,14 +69,11 @@
         <div class="portal-card text-center">
             <div class="relative inline-block mb-4">
                 <img id="user-pfp" src="" class="pfp-ring mx-auto">
-                <label class="absolute bottom-0 right-0 bg-black text-white p-2 rounded-full cursor-pointer text-[10px]">
-                    📸<input type="file" id="pfp-upload" class="hidden" onchange="uploadPFP()">
-                </label>
+                <label class="absolute bottom-0 right-0 bg-black text-white p-2 rounded-full cursor-pointer text-[10px]">📸<input type="file" id="pfp-upload" class="hidden" onchange="uploadPFP()"></label>
             </div>
             <div class="space-y-3 text-left">
-                <div><label class="text-[9px] font-black opacity-30 ml-2">NAME</label><input type="text" id="upd-name" class="w-full p-4 bg-gray-50 text-[10px]"></div>
-                <div><label class="text-[9px] font-black opacity-30 ml-2">PHONE</label><input type="text" id="upd-phone" class="w-full p-4 bg-gray-50 text-[10px]"></div>
-                <div><label class="text-[9px] font-black opacity-30 ml-2">GMAIL</label><input type="email" id="upd-email" class="w-full p-4 bg-gray-50 text-[10px]"></div>
+                <input type="text" id="upd-name" placeholder="NAME" class="w-full p-4 bg-gray-50 text-[10px]">
+                <input type="text" id="upd-phone" placeholder="PHONE" class="w-full p-4 bg-gray-50 text-[10px]">
             </div>
             <button onclick="updateProfile()" class="w-full bg-black text-white py-5 rounded-3xl font-black text-[10px] uppercase mt-6">Save Changes</button>
             <button onclick="logout()" class="w-full text-red-500 font-black text-[9px] uppercase mt-4">Logout Account</button>
@@ -121,35 +86,46 @@
             <h1 class="text-2xl font-black uppercase italic tracking-tighter text-black">Smile MC 👑</h1>
         </div>
         <div id="nav-user-pfp-trigger" onclick="openProfile()" class="hidden cursor-pointer">
-            <img id="header-pfp" src="" class="w-10 h-10 rounded-full border-2 border-black">
+            <img id="header-pfp" src="" class="w-10 h-10 rounded-full border-2 border-black object-cover">
         </div>
     </header>
 
     <main class="p-6 md:px-12 max-w-7xl mx-auto">
         <section id="page-home">
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-gray-50 p-6 rounded-[30px] text-center">
+                    <p class="text-[8px] font-black uppercase opacity-30 mb-1">Total Visitors</p>
+                    <p id="stat-visitors" class="text-2xl font-black italic">0</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-[30px] text-center">
+                    <p class="text-[8px] font-black uppercase opacity-30 mb-1">Signed Accounts</p>
+                    <p id="stat-accounts" class="text-2xl font-black italic">0</p>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-input" placeholder="SEARCH FOR RANKS OR ITEMS..." oninput="filterStore()">
+            </div>
+
             <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
         </section>
 
         <section id="page-admin" class="hidden">
             <div class="flex gap-4 mb-10 overflow-x-auto pb-2 no-scrollbar">
-                <button onclick="switchAdminTab('inventory')" class="bg-black text-white px-8 py-3 rounded-full text-[10px] font-black uppercase">Products</button>
-                <button onclick="switchAdminTab('users')" class="bg-gray-100 px-8 py-3 rounded-full text-[10px] font-black uppercase">Accounts</button>
+                <button onclick="switchAdminTab('inventory')" class="bg-black text-white px-8 py-3 rounded-full text-[10px] font-black uppercase">Store</button>
+                <button onclick="switchAdminTab('users')" class="bg-gray-100 px-8 py-3 rounded-full text-[10px] font-black uppercase">Users</button>
             </div>
-
             <div id="tab-inventory" class="adm-tab">
                 <div class="bg-gray-50 p-8 rounded-[40px] mb-8">
-                    <h3 id="adm-form-title" class="text-[11px] font-black uppercase mb-4">Post Product</h3>
-                    <input type="hidden" id="edit-product-id">
                     <div class="grid md:grid-cols-2 gap-4">
                         <input type="text" id="p-name" placeholder="NAME" class="w-full p-4 bg-white text-[11px]">
                         <input type="number" id="p-price" placeholder="PRICE" class="w-full p-4 bg-white text-[11px]">
-                        <div id="p-file-box"><input type="file" id="p-file" class="text-[10px]"></div>
+                        <input type="file" id="p-file" class="text-[10px]">
                         <button onclick="handlePublish()" class="bg-black text-white p-4 rounded-2xl font-black text-[11px]">SUBMIT</button>
                     </div>
                 </div>
                 <div id="inventory-list" class="grid gap-3"></div>
             </div>
-
             <div id="tab-users" class="adm-tab hidden grid gap-4"></div>
         </section>
     </main>
@@ -162,8 +138,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC41Y6mNNBFvjNeHdOOWGsjczMjyaqoqjU",
@@ -180,9 +156,8 @@
 
         let currentUser = null;
         let isSignUp = true;
-        let isEditing = false;
+        let allProducts = [];
 
-        // NOTIFICATION
         window.showAlert = (msg) => {
             const el = document.getElementById('custom-alert');
             el.innerText = msg.replace('Firebase: Error (auth/', '').replace(').', '').replace(/-/g, ' ');
@@ -190,137 +165,69 @@
             setTimeout(() => el.style.display = "none", 4000);
         };
 
+        // VISITOR TRACKING
+        async function trackVisitors() {
+            const vDoc = doc(db, "stats", "visitors");
+            await setDoc(vDoc, { count: increment(1) }, { merge: true });
+        }
+        onSnapshot(doc(db, "stats", "visitors"), d => document.getElementById('stat-visitors').innerText = d.data()?.count || 0);
+        onSnapshot(collection(db, "users"), snap => document.getElementById('stat-accounts').innerText = snap.size);
+
         // STAFF KEY
         window.checkStaffKey = () => {
-            const key = document.getElementById('staff-key-input').value;
-            if(key === "GHOSTYDEVELOPER") {
-                closeModal('staffModal');
-                showPage('admin');
-                loadAdmin();
-                showAlert("Staff Access Granted");
-            } else {
-                showAlert("Invalid Access Key");
-                document.getElementById('staff-key-input').value = "";
-            }
+            if(document.getElementById('staff-key-input').value === "GHOSTYDEVELOPER") {
+                closeModal('staffModal'); showPage('admin'); loadAdmin(); showAlert("Staff Access Granted");
+            } else { showAlert("Invalid Access Key"); }
         };
 
-        // AUTH
-        window.handleAuth = async () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            try {
-                if(isSignUp) {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, "users", res.user.uid), {
-                        name: document.getElementById('reg-name').value,
-                        phone: document.getElementById('reg-phone').value,
-                        email, password: pass, pfp: ""
-                    });
-                } else {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                }
-                closeModal('authModal');
-                showAlert("Connected!");
-            } catch(e) { showAlert(e.message); }
-        };
-
+        // AUTH & PROFILE
         onAuthStateChanged(auth, async user => {
             if(user) {
                 currentUser = user;
                 const d = (await getDoc(doc(db, "users", user.uid))).data();
                 const pfp = d?.pfp || `https://ui-avatars.com/api/?name=${d?.name}&background=000&color=fff`;
                 document.getElementById('header-pfp').src = pfp;
-                document.getElementById('user-pfp').src = pfp;
                 document.getElementById('nav-user-pfp-trigger').classList.remove('hidden');
-                document.getElementById('upd-name').value = d?.name;
-                document.getElementById('upd-phone').value = d?.phone;
-                document.getElementById('upd-email').value = user.email;
-            } else {
-                document.getElementById('nav-user-pfp-trigger').classList.add('hidden');
             }
         });
 
-        // PROFILE
-        window.uploadPFP = async () => {
-            const file = document.getElementById('pfp-upload').files[0];
-            const fd = new FormData(); fd.append("image", file);
-            showAlert("Uploading...");
-            const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
-            const d = await r.json();
-            await updateDoc(doc(db, "users", currentUser.uid), { pfp: d.data.url });
-            document.getElementById('user-pfp').src = d.data.url;
-            showAlert("Photo Updated!");
+        window.handleAuth = async () => {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            try {
+                if(isSignUp) {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), { name: document.getElementById('reg-name').value, phone: document.getElementById('reg-phone').value, email, password: pass, pfp: "" });
+                } else { await signInWithEmailAndPassword(auth, email, pass); }
+                closeModal('authModal');
+            } catch(e) { showAlert(e.message); }
         };
 
-        window.updateProfile = async () => {
-            const email = document.getElementById('upd-email').value;
-            if(email !== currentUser.email) await updateEmail(auth.currentUser, email);
-            await updateDoc(doc(db, "users", currentUser.uid), {
-                name: document.getElementById('upd-name').value,
-                phone: document.getElementById('upd-phone').value,
-                email: email
-            });
-            showAlert("Profile Saved!");
-            closeModal('profileModal');
+        // SEARCH FILTER
+        window.filterStore = () => {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query));
+            renderProducts(filtered);
         };
 
-        // ADMIN
-        function loadAdmin() {
-            onSnapshot(collection(db, "users"), snap => {
-                document.getElementById('tab-users').innerHTML = snap.docs.map(d => {
-                    const u = d.data();
-                    return `<div class="bg-gray-50 p-6 rounded-[30px] border border-gray-100">
-                        <div class="flex items-center gap-4 mb-3">
-                            <img src="${u.pfp || 'https://ui-avatars.com/api/?name='+u.name}" class="w-12 h-12 rounded-full border-2 border-black">
-                            <div><p class="text-[12px] font-black uppercase">${u.name}</p><p class="text-[9px] opacity-40">GMAIL: ${u.email}</p></div>
-                        </div>
-                        <p class="text-[10px] font-bold">PHONE: ${u.phone}</p>
-                        <p class="text-red-500 bg-red-50 p-3 rounded-xl mt-3 text-[10px] font-black">PASS: ${u.password}</p>
-                    </div>`;
-                }).join('');
-            });
-
-            onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
-                document.getElementById('inventory-list').innerHTML = snap.docs.map(d => {
-                    const p = d.data();
-                    return `<div class="bg-white p-4 rounded-2xl border flex justify-between items-center">
-                        <p class="text-[10px] font-black uppercase">${p.name} - Rs.${p.price}</p>
-                        <div class="flex gap-2">
-                            <button onclick="editProduct('${d.id}','${p.name}','${p.price}')" class="text-blue-500 font-black text-[8px]">EDIT</button>
-                            <button onclick="deleteDoc(doc(db, 'products', '${d.id}'))" class="text-red-500 font-black text-[8px]">DEL</button>
-                        </div>
-                    </div>`;
-                }).join('');
-            });
+        function renderProducts(products) {
+            document.getElementById('product-grid').innerHTML = products.map(p => `
+                <div class="bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm">
+                    <img src="${p.image}" class="w-full aspect-square object-cover">
+                    <div class="p-5">
+                        <p class="text-[10px] font-black uppercase opacity-20">${p.name}</p>
+                        <p class="text-xl font-black mb-4">Rs.${p.price}</p>
+                        <button onclick="showAlert('BUY FUNCTIONALITY READY')" class="w-full py-4 bg-black text-white rounded-2xl text-[9px] font-black uppercase">Buy Now</button>
+                    </div>
+                </div>`).join('');
         }
 
-        window.handlePublish = async () => {
-            const name = document.getElementById('p-name').value;
-            const price = document.getElementById('p-price').value;
-            if(isEditing) {
-                await updateDoc(doc(db, "products", document.getElementById('edit-product-id').value), { name, price });
-                isEditing = false;
-                showAlert("Updated!");
-            } else {
-                const file = document.getElementById('p-file').files[0];
-                const fd = new FormData(); fd.append("image", file);
-                const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
-                const d = await r.json();
-                await addDoc(collection(db, "products"), { name, price, image: d.data.url, createdAt: serverTimestamp() });
-                showAlert("Live!");
-            }
-        };
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+            allProducts = snap.docs.map(d => d.data());
+            renderProducts(allProducts);
+        });
 
-        window.editProduct = (id, n, p) => {
-            isEditing = true;
-            document.getElementById('edit-product-id').value = id;
-            document.getElementById('p-name').value = n;
-            document.getElementById('p-price').value = p;
-            document.getElementById('p-file-box').style.display = "none";
-            document.getElementById('adm-form-title').innerText = "Edit Mode On";
-        };
-
-        // UI
+        // UI HELPERS
         window.showPage = id => {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(`page-${id}`).classList.remove('hidden');
@@ -331,22 +238,8 @@
         window.openProfile = () => currentUser ? openModal('profileModal') : openModal('authModal');
         window.logout = () => signOut(auth).then(() => location.reload());
         window.toggleAuthMode = () => { isSignUp = !isSignUp; document.getElementById('auth-title').innerText = isSignUp ? "Join Smile MC" : "Welcome Back"; };
-        window.switchAdminTab = t => { document.querySelectorAll('.adm-tab').forEach(x => x.classList.add('hidden')); document.getElementById(`tab-${t}`).classList.remove('hidden'); };
-
-        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
-            document.getElementById('product-grid').innerHTML = snap.docs.map(d => {
-                const p = d.data();
-                return `<div class="bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm">
-                    <img src="${p.image}" class="w-full aspect-square object-cover">
-                    <div class="p-5">
-                        <p class="text-[10px] font-black uppercase opacity-20">${p.name}</p>
-                        <p class="text-xl font-black mb-4">Rs.${p.price}</p>
-                        <button onclick="showAlert('Buy functionality ready')" class="w-full py-4 bg-black text-white rounded-2xl text-[9px] font-black uppercase">Buy Now</button>
-                    </div>
-                </div>`;
-            }).join('');
-        });
-
+        
+        trackVisitors();
         showPage('home');
     </script>
 </body>
