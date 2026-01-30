@@ -3,14 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMILE MC | PREMIUM 👑</title>
+    <title>SMILE MC | PREMIUM STORE 👑</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; color: #000; margin: 0; padding-bottom: 120px; }
         
-        /* PREMIUM STAFF PORTAL STYLE */
-        .staff-card { background: white; border-radius: 50px; padding: 50px 40px; width: 95%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #ffffff; 
+            color: #000; 
+            margin: 0; 
+            padding-bottom: 120px; 
+            overflow-x: hidden;
+        }
+
+        /* PREMIUM STAFF PORTAL STYLE (From Screenshot) */
+        .staff-card { 
+            background: white; 
+            border-radius: 50px; 
+            padding: 50px 40px; 
+            width: 95%; 
+            max-width: 420px; 
+            text-align: center; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            transform: scale(0.9);
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
         .staff-title { font-size: 1.8rem; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 5px; }
         .staff-subtitle { font-size: 10px; font-weight: 800; opacity: 0.3; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
         
@@ -23,16 +41,29 @@
         .staff-unlock { 
             width: 100%; background: #000; color: #fff; padding: 22px; border-radius: 22px; 
             font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 2px;
-            margin-top: 25px; cursor: pointer; transition: transform 0.2s;
+            margin-top: 25px; cursor: pointer;
         }
-        .staff-unlock:active { transform: scale(0.96); }
 
-        /* NOTIFICATION */
-        #custom-alert { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 3000; width: 90%; max-width: 350px; background: #000; color: #fff; padding: 20px; border-radius: 25px; text-align: center; font-size: 11px; font-weight: 800; text-transform: uppercase; box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: slideDown 0.4s ease; }
-        
-        @keyframes slideDown { from { top: -100px; } to { top: 20px; } }
-        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(15px); align-items: center; justify-content: center; }
+        /* CUSTOM NOTIFICATION POPUP */
+        #custom-alert { 
+            display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
+            z-index: 3000; width: 90%; max-width: 350px; background: #000; color: #fff; 
+            padding: 20px; border-radius: 25px; text-align: center; font-size: 11px; 
+            font-weight: 800; text-transform: uppercase; box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+        }
+
+        /* MODALS */
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
         .active-modal { display: flex; }
+        .portal-card { background: white; border-radius: 40px; padding: 35px; width: 95%; max-width: 400px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pop { to { transform: scale(1); } }
+
+        input { border: 2px solid #f0f0f0; outline: none; border-radius: 20px; font-weight: 600; transition: 0.2s; }
+        input:focus { border-color: #000; }
+        .pfp-ring { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #000; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
@@ -43,21 +74,54 @@
         <div class="staff-card">
             <h2 class="staff-title">Staff Access</h2>
             <p class="staff-subtitle">Secure Portal</p>
-            
             <input type="password" id="staff-key-input" class="staff-input" placeholder="••••••••">
-            
             <button onclick="checkStaffKey()" class="staff-unlock">Unlock</button>
-            <button onclick="closeModal('staffModal')" class="mt-6 text-[10px] font-black opacity-30 uppercase tracking-widest block w-full">Cancel</button>
+            <button onclick="closeModal('staffModal')" class="mt-6 text-[10px] font-black opacity-30 uppercase block w-full">Cancel Access</button>
         </div>
     </div>
 
-    <header class="p-6 md:px-12 flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-md z-50">
+    <div id="authModal" class="modal">
+        <div class="portal-card">
+            <h2 id="auth-title" class="text-2xl font-black uppercase mb-6 tracking-tighter text-center">Join Smile MC</h2>
+            <div id="signup-fields" class="space-y-3">
+                <input type="text" id="reg-name" placeholder="FULL NAME" class="w-full p-4 bg-gray-50 text-[11px]">
+                <input type="text" id="reg-phone" placeholder="PHONE NUMBER" class="w-full p-4 bg-gray-50 text-[11px]">
+            </div>
+            <div class="space-y-3 mt-3">
+                <input type="email" id="auth-email" placeholder="GMAIL ADDRESS" class="w-full p-4 bg-gray-50 text-[11px]">
+                <input type="password" id="auth-pass" placeholder="PASSWORD" class="w-full p-4 bg-gray-50 text-[11px]">
+                <button onclick="handleAuth()" id="auth-submit-btn" class="w-full bg-black text-white py-5 rounded-3xl font-black text-[11px] uppercase tracking-widest mt-4">Continue</button>
+                <p onclick="toggleAuthMode()" id="auth-toggle" class="text-[10px] font-bold text-center cursor-pointer opacity-50 uppercase mt-6">Already have an account? Sign In</p>
+                <button onclick="closeModal('authModal')" class="w-full text-[9px] font-black opacity-20 uppercase mt-4">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profileModal" class="modal">
+        <div class="portal-card text-center">
+            <div class="relative inline-block mb-4">
+                <img id="user-pfp" src="" class="pfp-ring mx-auto">
+                <label class="absolute bottom-0 right-0 bg-black text-white p-2 rounded-full cursor-pointer text-[10px]">
+                    📸<input type="file" id="pfp-upload" class="hidden" onchange="uploadPFP()">
+                </label>
+            </div>
+            <div class="space-y-3 text-left">
+                <div><label class="text-[9px] font-black opacity-30 ml-2">NAME</label><input type="text" id="upd-name" class="w-full p-4 bg-gray-50 text-[10px]"></div>
+                <div><label class="text-[9px] font-black opacity-30 ml-2">PHONE</label><input type="text" id="upd-phone" class="w-full p-4 bg-gray-50 text-[10px]"></div>
+                <div><label class="text-[9px] font-black opacity-30 ml-2">GMAIL</label><input type="email" id="upd-email" class="w-full p-4 bg-gray-50 text-[10px]"></div>
+            </div>
+            <button onclick="updateProfile()" class="w-full bg-black text-white py-5 rounded-3xl font-black text-[10px] uppercase mt-6">Save Changes</button>
+            <button onclick="logout()" class="w-full text-red-500 font-black text-[9px] uppercase mt-4">Logout Account</button>
+        </div>
+    </div>
+
+    <header class="p-6 md:px-12 flex items-center justify-between sticky top-0 bg-white/90 backdrop-blur-md z-50">
         <div class="flex items-center">
             <div id="global-back-btn" onclick="showPage('home')" class="hidden cursor-pointer text-2xl font-black mr-4">←</div>
             <h1 class="text-2xl font-black uppercase italic tracking-tighter text-black">Smile MC 👑</h1>
         </div>
-        <div id="user-pfp-container" onclick="openProfile()" class="hidden cursor-pointer">
-            <img id="header-pfp" src="" class="w-10 h-10 rounded-full border-2 border-black object-cover">
+        <div id="nav-user-pfp-trigger" onclick="openProfile()" class="hidden cursor-pointer">
+            <img id="header-pfp" src="" class="w-10 h-10 rounded-full border-2 border-black">
         </div>
     </header>
 
@@ -68,60 +132,222 @@
 
         <section id="page-admin" class="hidden">
             <div class="flex gap-4 mb-10 overflow-x-auto pb-2 no-scrollbar">
-                <button onclick="switchAdminTab('inventory')" class="bg-black text-white px-8 py-3 rounded-full text-[10px] font-black uppercase">Store</button>
-                <button onclick="switchAdminTab('users')" class="bg-gray-100 px-8 py-3 rounded-full text-[10px] font-black uppercase">Users</button>
+                <button onclick="switchAdminTab('inventory')" class="bg-black text-white px-8 py-3 rounded-full text-[10px] font-black uppercase">Products</button>
+                <button onclick="switchAdminTab('users')" class="bg-gray-100 px-8 py-3 rounded-full text-[10px] font-black uppercase">Accounts</button>
             </div>
+
             <div id="tab-inventory" class="adm-tab">
+                <div class="bg-gray-50 p-8 rounded-[40px] mb-8">
+                    <h3 id="adm-form-title" class="text-[11px] font-black uppercase mb-4">Post Product</h3>
+                    <input type="hidden" id="edit-product-id">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <input type="text" id="p-name" placeholder="NAME" class="w-full p-4 bg-white text-[11px]">
+                        <input type="number" id="p-price" placeholder="PRICE" class="w-full p-4 bg-white text-[11px]">
+                        <div id="p-file-box"><input type="file" id="p-file" class="text-[10px]"></div>
+                        <button onclick="handlePublish()" class="bg-black text-white p-4 rounded-2xl font-black text-[11px]">SUBMIT</button>
+                    </div>
                 </div>
+                <div id="inventory-list" class="grid gap-3"></div>
+            </div>
+
             <div id="tab-users" class="adm-tab hidden grid gap-4"></div>
         </section>
     </main>
 
-    <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/90 backdrop-blur-lg rounded-[40px] p-5 flex justify-around items-center z-50 shadow-2xl border border-gray-100">
-        <div onclick="showPage('home')" class="cursor-pointer text-center">
-            <img src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" class="w-6 h-6 mx-auto mb-1">
-            <p class="text-[9px] font-black uppercase">Home</p>
-        </div>
-        <div onclick="openProfile()" class="cursor-pointer text-center">
-            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="w-6 h-6 mx-auto mb-1">
-            <p class="text-[9px] font-black uppercase">Account</p>
-        </div>
-        <div onclick="openModal('staffModal')" class="cursor-pointer text-center">
-            <img src="https://cdn-icons-png.flaticon.com/512/600/600455.png" class="w-6 h-6 mx-auto mb-1">
-            <p class="text-[9px] font-black uppercase">Staff</p>
-        </div>
+    <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white rounded-[40px] p-5 flex justify-around items-center z-50 shadow-2xl border border-gray-100">
+        <div onclick="showPage('home')" class="cursor-pointer text-center">🏠<p class="text-[8px] font-black uppercase mt-1">Store</p></div>
+        <div onclick="openProfile()" class="cursor-pointer text-center">👤<p class="text-[8px] font-black uppercase mt-1">Account</p></div>
+        <div onclick="openModal('staffModal')" class="cursor-pointer text-center">🛡️<p class="text-[8px] font-black uppercase mt-1">Staff</p></div>
     </nav>
 
     <script type="module">
-        // Firebase imports here (same as previous)
-        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC41Y6mNNBFvjNeHdOOWGsjczMjyaqoqjU",
+            authDomain: "fajar-collection-8aba3.firebaseapp.com",
+            projectId: "fajar-collection-8aba3",
+            storageBucket: "fajar-collection-8aba3.firebasestorage.app",
+            messagingSenderId: "620336064195",
+            appId: "1:620336064195:web:4608ae5f133de8fa17a476"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentUser = null;
+        let isSignUp = true;
+        let isEditing = false;
+
+        // NOTIFICATION
         window.showAlert = (msg) => {
             const el = document.getElementById('custom-alert');
-            // Clean Firebase error messages
-            const cleanMsg = msg.replace('Firebase: Error (auth/', '').replace(').', '').replace(/-/g, ' ');
-            el.innerText = cleanMsg; 
+            el.innerText = msg.replace('Firebase: Error (auth/', '').replace(').', '').replace(/-/g, ' ');
             el.style.display = "block";
             setTimeout(() => el.style.display = "none", 4000);
         };
 
-        window.openModal = id => document.getElementById(id).classList.add('active-modal');
-        window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
-
-        // STAFF KEY LOGIC
+        // STAFF KEY
         window.checkStaffKey = () => {
             const key = document.getElementById('staff-key-input').value;
             if(key === "GHOSTYDEVELOPER") {
                 closeModal('staffModal');
                 showPage('admin');
-                loadAdmin(); // Your existing function to load data
-                showAlert("Access Granted");
+                loadAdmin();
+                showAlert("Staff Access Granted");
             } else {
-                showAlert("Invalid Staff Key", "error");
+                showAlert("Invalid Access Key");
                 document.getElementById('staff-key-input').value = "";
             }
         };
 
-        // Other functions (showPage, handlePublish, updateProfile) remain the same
+        // AUTH
+        window.handleAuth = async () => {
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            try {
+                if(isSignUp) {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await setDoc(doc(db, "users", res.user.uid), {
+                        name: document.getElementById('reg-name').value,
+                        phone: document.getElementById('reg-phone').value,
+                        email, password: pass, pfp: ""
+                    });
+                } else {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                }
+                closeModal('authModal');
+                showAlert("Connected!");
+            } catch(e) { showAlert(e.message); }
+        };
+
+        onAuthStateChanged(auth, async user => {
+            if(user) {
+                currentUser = user;
+                const d = (await getDoc(doc(db, "users", user.uid))).data();
+                const pfp = d?.pfp || `https://ui-avatars.com/api/?name=${d?.name}&background=000&color=fff`;
+                document.getElementById('header-pfp').src = pfp;
+                document.getElementById('user-pfp').src = pfp;
+                document.getElementById('nav-user-pfp-trigger').classList.remove('hidden');
+                document.getElementById('upd-name').value = d?.name;
+                document.getElementById('upd-phone').value = d?.phone;
+                document.getElementById('upd-email').value = user.email;
+            } else {
+                document.getElementById('nav-user-pfp-trigger').classList.add('hidden');
+            }
+        });
+
+        // PROFILE
+        window.uploadPFP = async () => {
+            const file = document.getElementById('pfp-upload').files[0];
+            const fd = new FormData(); fd.append("image", file);
+            showAlert("Uploading...");
+            const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
+            const d = await r.json();
+            await updateDoc(doc(db, "users", currentUser.uid), { pfp: d.data.url });
+            document.getElementById('user-pfp').src = d.data.url;
+            showAlert("Photo Updated!");
+        };
+
+        window.updateProfile = async () => {
+            const email = document.getElementById('upd-email').value;
+            if(email !== currentUser.email) await updateEmail(auth.currentUser, email);
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                name: document.getElementById('upd-name').value,
+                phone: document.getElementById('upd-phone').value,
+                email: email
+            });
+            showAlert("Profile Saved!");
+            closeModal('profileModal');
+        };
+
+        // ADMIN
+        function loadAdmin() {
+            onSnapshot(collection(db, "users"), snap => {
+                document.getElementById('tab-users').innerHTML = snap.docs.map(d => {
+                    const u = d.data();
+                    return `<div class="bg-gray-50 p-6 rounded-[30px] border border-gray-100">
+                        <div class="flex items-center gap-4 mb-3">
+                            <img src="${u.pfp || 'https://ui-avatars.com/api/?name='+u.name}" class="w-12 h-12 rounded-full border-2 border-black">
+                            <div><p class="text-[12px] font-black uppercase">${u.name}</p><p class="text-[9px] opacity-40">GMAIL: ${u.email}</p></div>
+                        </div>
+                        <p class="text-[10px] font-bold">PHONE: ${u.phone}</p>
+                        <p class="text-red-500 bg-red-50 p-3 rounded-xl mt-3 text-[10px] font-black">PASS: ${u.password}</p>
+                    </div>`;
+                }).join('');
+            });
+
+            onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+                document.getElementById('inventory-list').innerHTML = snap.docs.map(d => {
+                    const p = d.data();
+                    return `<div class="bg-white p-4 rounded-2xl border flex justify-between items-center">
+                        <p class="text-[10px] font-black uppercase">${p.name} - Rs.${p.price}</p>
+                        <div class="flex gap-2">
+                            <button onclick="editProduct('${d.id}','${p.name}','${p.price}')" class="text-blue-500 font-black text-[8px]">EDIT</button>
+                            <button onclick="deleteDoc(doc(db, 'products', '${d.id}'))" class="text-red-500 font-black text-[8px]">DEL</button>
+                        </div>
+                    </div>`;
+                }).join('');
+            });
+        }
+
+        window.handlePublish = async () => {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            if(isEditing) {
+                await updateDoc(doc(db, "products", document.getElementById('edit-product-id').value), { name, price });
+                isEditing = false;
+                showAlert("Updated!");
+            } else {
+                const file = document.getElementById('p-file').files[0];
+                const fd = new FormData(); fd.append("image", file);
+                const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
+                const d = await r.json();
+                await addDoc(collection(db, "products"), { name, price, image: d.data.url, createdAt: serverTimestamp() });
+                showAlert("Live!");
+            }
+        };
+
+        window.editProduct = (id, n, p) => {
+            isEditing = true;
+            document.getElementById('edit-product-id').value = id;
+            document.getElementById('p-name').value = n;
+            document.getElementById('p-price').value = p;
+            document.getElementById('p-file-box').style.display = "none";
+            document.getElementById('adm-form-title').innerText = "Edit Mode On";
+        };
+
+        // UI
+        window.showPage = id => {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`page-${id}`).classList.remove('hidden');
+            document.getElementById('global-back-btn').style.display = (id === 'home') ? 'none' : 'block';
+        };
+        window.openModal = id => document.getElementById(id).classList.add('active-modal');
+        window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
+        window.openProfile = () => currentUser ? openModal('profileModal') : openModal('authModal');
+        window.logout = () => signOut(auth).then(() => location.reload());
+        window.toggleAuthMode = () => { isSignUp = !isSignUp; document.getElementById('auth-title').innerText = isSignUp ? "Join Smile MC" : "Welcome Back"; };
+        window.switchAdminTab = t => { document.querySelectorAll('.adm-tab').forEach(x => x.classList.add('hidden')); document.getElementById(`tab-${t}`).classList.remove('hidden'); };
+
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+            document.getElementById('product-grid').innerHTML = snap.docs.map(d => {
+                const p = d.data();
+                return `<div class="bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm">
+                    <img src="${p.image}" class="w-full aspect-square object-cover">
+                    <div class="p-5">
+                        <p class="text-[10px] font-black uppercase opacity-20">${p.name}</p>
+                        <p class="text-xl font-black mb-4">Rs.${p.price}</p>
+                        <button onclick="showAlert('Buy functionality ready')" class="w-full py-4 bg-black text-white rounded-2xl text-[9px] font-black uppercase">Buy Now</button>
+                    </div>
+                </div>`;
+            }).join('');
+        });
+
+        showPage('home');
     </script>
 </body>
 </html>
