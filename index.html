@@ -158,7 +158,7 @@
             <div id="check-step-3" class="step-hidden text-center py-8">
                 <div class="text-5xl mb-6">✅</div>
                 <h2 class="text-2xl font-black uppercase tracking-tighter mb-4">Order Logged</h2>
-                <p class="text-[11px] font-bold opacity-50 mb-8 leading-relaxed">Saved to Staff Panel. Redirecting to WhatsApp...</p>
+                <p class="text-[11px] font-bold opacity-50 mb-8 leading-relaxed">Saved. Opening WhatsApp for proof...</p>
             </div>
         </div>
     </div>
@@ -178,9 +178,9 @@
 
         <section id="page-admin" class="hidden">
             <div class="flex gap-4 mb-10 overflow-x-auto pb-2 no-scrollbar">
-                <button onclick="switchAdminTab('inventory')" class="adm-btn bg-white text-black px-8 py-3 rounded-full text-[10px] font-black uppercase">Products</button>
-                <button onclick="switchAdminTab('orders')" class="adm-btn bg-[#111] text-gray-500 px-8 py-3 rounded-full text-[10px] font-black uppercase">Orders</button>
-                <button onclick="switchAdminTab('users')" class="adm-btn bg-[#111] text-gray-500 px-8 py-3 rounded-full text-[10px] font-black uppercase">Accounts</button>
+                <button id="btn-inventory" onclick="switchAdminTab('inventory')" class="adm-btn bg-white text-black px-8 py-3 rounded-full text-[10px] font-black uppercase">Products</button>
+                <button id="btn-orders" onclick="switchAdminTab('orders')" class="adm-btn bg-[#111] text-gray-500 px-8 py-3 rounded-full text-[10px] font-black uppercase">Orders</button>
+                <button id="btn-users" onclick="switchAdminTab('users')" class="adm-btn bg-[#111] text-gray-500 px-8 py-3 rounded-full text-[10px] font-black uppercase">Accounts</button>
             </div>
             <div id="tab-inventory" class="adm-tab">
                 <div class="bg-[#111] p-8 rounded-[40px] mb-8 border border-[#222]">
@@ -236,17 +236,9 @@
         let isSignUp = true;
         let selectedProduct = "";
 
-        // DELETE PRODUCT FIX
-        window.removeProduct = async (id) => {
-            if(confirm("Remove this item?")) {
-                await deleteDoc(doc(db, "products", id));
-            }
-        };
-
-        // DELETE ORDER FIX
-        window.removeOrder = async (id) => {
-            await deleteDoc(doc(db, "orders", id));
-        };
+        // GLOBAL REMOVE FUNCTIONS
+        window.removeProduct = async (id) => { if(confirm("Delete product?")) await deleteDoc(doc(db, "products", id)); };
+        window.removeOrder = async (id) => { if(confirm("Clear order?")) await deleteDoc(doc(db, "orders", id)); };
 
         window.verifyStaffKey = () => {
             const k = document.getElementById('staff-key-input').value;
@@ -261,8 +253,7 @@
                 if (isSignUp) {
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     await setDoc(doc(db, "users", res.user.uid), { 
-                        name: document.getElementById('reg-name').value, 
-                        phone: document.getElementById('reg-phone').value,
+                        name: document.getElementById('reg-name').value, phone: document.getElementById('reg-phone').value,
                         email, password: pass 
                     });
                 } else { await signInWithEmailAndPassword(auth, email, pass); }
@@ -280,18 +271,16 @@
         };
 
         function loadAdmin() {
-            // USERS
             onSnapshot(collection(db, "users"), snap => {
                 document.getElementById('tab-users').innerHTML = snap.docs.map(d => {
                     const u = d.data();
                     return `<div class="bg-[#111] p-6 rounded-3xl border border-[#222]">
-                        <p class="text-[11px] font-black text-white mb-1 uppercase">${u.name}</p>
-                        <p class="text-[9px] text-gray-500">EMAIL: ${u.email} | WA: ${u.phone}</p>
-                        <p class="text-[10px] font-black text-red-500 mt-2 bg-red-900/20 p-3 rounded-xl inline-block uppercase">Password: ${u.password}</p>
+                        <p class="text-[11px] font-black text-white uppercase">${u.name}</p>
+                        <p class="text-[9px] text-gray-500">WA: ${u.phone} | ${u.email}</p>
+                        <p class="text-[10px] font-black text-red-500 mt-2 bg-red-900/10 p-2 rounded uppercase">Pass: ${u.password}</p>
                     </div>`;
                 }).join('');
             });
-            // ORDERS (UPDATED TO SHOW ALL DETAILS)
             onSnapshot(query(collection(db, "orders"), orderBy("timestamp", "desc")), snap => {
                 document.getElementById('tab-orders').innerHTML = snap.docs.map(d => {
                     const o = d.data();
@@ -299,27 +288,32 @@
                         <div class="space-y-1">
                             <p class="text-[12px] font-black text-blue-400 uppercase">${o.product}</p>
                             <p class="text-[10px] font-bold text-white">IGN: ${o.ign}</p>
-                            <p class="text-[9px] text-gray-400">WHATSAPP: ${o.wa}</p>
-                            ${o.rankName !== "N/A" ? `<p class="text-[10px] font-black text-green-400 bg-green-900/10 px-2 py-1 rounded">RANK: ${o.rankName}</p>` : ''}
+                            <p class="text-[9px] text-gray-400">WA: ${o.wa}</p>
+                            ${o.rankName !== "N/A" ? `<p class="text-[9px] font-black text-green-400 bg-green-900/10 p-1 inline-block rounded">RANK: ${o.rankName}</p>` : ''}
                         </div>
-                        <button onclick="removeOrder('${d.id}')" class="bg-red-900/20 text-red-500 p-3 rounded-xl text-[8px] font-black">DELETE</button>
+                        <button onclick="removeOrder('${d.id}')" class="bg-red-900/20 text-red-500 p-3 rounded-xl text-[8px] font-black uppercase">Delete</button>
                     </div>`;
                 }).join('');
             });
         }
 
-        // STORE & INVENTORY LIST
         onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
             document.getElementById('product-grid').innerHTML = snap.docs.map(d => {
                 const p = d.data();
-                return `<div class="bg-[#111] rounded-[35px] border border-[#222] overflow-hidden"><img src="${p.image}" class="w-full aspect-square object-cover"><div class="p-5"><p class="text-[10px] font-black text-white uppercase opacity-30">${p.name}</p><p class="text-xl font-black mb-4 text-white">Rs.${p.price}</p><button onclick="startCheckout('${p.name}')" class="w-full py-4 bg-white text-black rounded-2xl text-[9px] font-black uppercase">Buy Now</button></div></div>`;
+                return `<div class="bg-[#111] rounded-[35px] border border-[#222] overflow-hidden">
+                    <img src="${p.image}" class="w-full aspect-square object-cover">
+                    <div class="p-5">
+                        <p class="text-[10px] font-black text-white uppercase opacity-30">${p.name}</p>
+                        <p class="text-xl font-black mb-4 text-white">Rs.${p.price}</p>
+                        <button onclick="startCheckout('${p.name}')" class="w-full py-4 bg-white text-black rounded-2xl text-[9px] font-black uppercase">Buy Now</button>
+                    </div>
+                </div>`;
             }).join('');
-
             document.getElementById('inventory-list').innerHTML = snap.docs.map(d => {
                 const p = d.data();
                 return `<div class="bg-[#111] p-4 rounded-2xl border border-[#222] flex justify-between items-center">
                     <p class="text-[10px] font-black uppercase text-white">${p.name}</p>
-                    <button onclick="removeProduct('${d.id}')" class="text-red-500 font-black text-[8px]">REMOVE</button>
+                    <button onclick="removeProduct('${d.id}')" class="text-red-500 font-black text-[8px] uppercase">Remove</button>
                 </div>`;
             }).join('');
         });
@@ -328,23 +322,10 @@
             const ign = document.getElementById('ord-ign').value;
             const wa = document.getElementById('ord-whatsapp').value;
             const rank = document.getElementById('ord-customrank').value || "N/A";
-            
-            await addDoc(collection(db, "orders"), { 
-                product: selectedProduct, ign, wa, rankName: rank, timestamp: serverTimestamp() 
-            });
-
+            await addDoc(collection(db, "orders"), { product: selectedProduct, ign, wa, rankName: rank, timestamp: serverTimestamp() });
             nextStep(3);
-
-            const text = `👑 *SMILE MC ORDER* 👑%0A%0A` +
-                         `*Product:* ${selectedProduct}%0A` +
-                         `*IGN:* ${ign}%0A` +
-                         `*Rank:* ${rank}%0A` +
-                         `*WhatsApp:* ${wa}%0A%0A` +
-                         `_I have paid. Here is my screenshot:_`;
-
-            setTimeout(() => {
-                window.open(`https://wa.me/923706116030?text=${text}`, '_blank');
-            }, 2000);
+            const msg = `👑 *SMILE MC ORDER* 👑%0A%0A*Item:* ${selectedProduct}%0A*IGN:* ${ign}%0A*Rank:* ${rank}%0A*WhatsApp:* ${wa}`;
+            setTimeout(() => { window.open(`https://wa.me/923706116030?text=${msg}`, '_blank'); }, 2000);
         };
 
         window.startCheckout = pName => { if(!currentUser) return openModal('authModal'); selectedProduct = pName; document.getElementById('custom-rank-container').classList.toggle('hidden', !pName.toUpperCase().includes("RANK")); openModal('checkoutModal'); nextStep(1); };
@@ -352,13 +333,15 @@
         window.nextStep = s => { [1,2,3].forEach(n => document.getElementById(`check-step-${n}`).classList.add('step-hidden')); document.getElementById(`check-step-${s}`).classList.remove('step-hidden'); };
         window.openModal = id => document.getElementById(id).classList.add('active-modal');
         window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
+        
         window.switchAdminTab = t => {
-            document.querySelectorAll('.adm-btn').forEach(b => { b.classList.replace('bg-white', 'bg-[#111]'); b.classList.replace('text-black', 'text-gray-500'); });
-            event.target.classList.replace('bg-[#111]', 'bg-white');
-            event.target.classList.replace('text-gray-500', 'text-black');
+            document.querySelectorAll('.adm-btn').forEach(b => { b.classList.add('bg-[#111]', 'text-gray-500'); b.classList.remove('bg-white', 'text-black'); });
+            document.getElementById(`btn-${t}`).classList.remove('bg-[#111]', 'text-gray-500');
+            document.getElementById(`btn-${t}`).classList.add('bg-white', 'text-black');
             document.querySelectorAll('.adm-tab').forEach(tab => tab.classList.add('hidden'));
             document.getElementById(`tab-${t}`).classList.remove('hidden');
         };
+
         window.handlePublish = async () => {
             const file = document.getElementById('p-file').files[0];
             const fd = new FormData(); fd.append("image", file);
