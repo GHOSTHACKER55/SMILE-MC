@@ -7,135 +7,98 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; color: #000; margin: 0; padding-bottom: 120px; overflow-x: hidden; }
-
-        /* STAFF ACCESS MODAL (MATCHING SCREENSHOT) */
-        .staff-card { background: white; border-radius: 50px; padding: 50px 40px; width: 95%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
-        .staff-title { font-size: 1.8rem; font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 5px; }
-        .staff-subtitle { font-size: 10px; font-weight: 800; opacity: 0.3; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
-        .staff-input { width: 100%; padding: 20px; border-radius: 20px; border: 2.5px solid #2563eb; text-align: center; font-size: 20px; letter-spacing: 8px; color: #2563eb; outline: none; box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.2); }
-        .staff-unlock { width: 100%; background: #000; color: #fff; padding: 22px; border-radius: 22px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; margin-top: 25px; transition: 0.3s; }
-        .staff-unlock:active { transform: scale(0.95); }
-
-        /* BEAUTIFUL POPUP ALERT */
-        #custom-alert { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 3000; width: 90%; max-width: 350px; background: #000; color: #fff; padding: 20px; border-radius: 25px; text-align: center; font-size: 11px; font-weight: 800; text-transform: uppercase; box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: slideDown 0.4s ease; }
-        @keyframes slideDown { from { top: -100px; } to { top: 20px; } }
-
-        /* MODALS */
-        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); align-items: center; justify-content: center; }
-        .active-modal { display: flex; }
-        .portal-card { background: white; border-radius: 40px; padding: 35px; width: 95%; max-width: 400px; }
-
-        input { border: 2px solid #f0f0f0; outline: none; border-radius: 20px; font-weight: 600; padding: 15px; font-size: 12px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; color: #000; margin: 0; padding-bottom: 120px; }
+        .brand-logo { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1.5px; }
+        .modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); animation: fadeIn 0.3s ease; }
+        .active-modal { display: flex; align-items: center; justify-content: center; }
+        .portal-card { background: white; border-radius: 40px; padding: 35px; width: 95%; max-width: 400px; transform: scale(0.9); animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        #custom-alert { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; width: 90%; max-width: 350px; background: #000; color: #fff; padding: 20px; border-radius: 25px; text-align: center; font-size: 11px; font-weight: 800; text-transform: uppercase; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pop { to { transform: scale(1); } }
+        input { border: 2px solid #f0f0f0; outline: none; transition: all 0.2s; border-radius: 20px; font-weight: 600; }
         input:focus { border-color: #000; }
         .pfp-ring { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #000; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        .buy-btn { width: 100%; padding: 16px; background: #000; color: #fff; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <div id="custom-alert"></div>
 
-    <div id="staffModal" class="modal">
-        <div class="staff-card">
-            <h2 class="staff-title">Staff Access</h2>
-            <p class="staff-subtitle">Secure Portal</p>
-            <input type="password" id="staff-key-input" class="staff-input" placeholder="••••••••">
-            <button onclick="checkStaffKey()" class="staff-unlock">Unlock</button>
-            <button onclick="closeModal('staffModal')" class="mt-6 text-[10px] font-black opacity-30 uppercase block w-full">Cancel Access</button>
+    <div id="profileModal" class="modal">
+        <div class="portal-card text-center">
+            <div class="relative inline-block mb-4">
+                <img id="user-pfp" src="" class="pfp-ring mx-auto">
+                <label class="absolute bottom-0 right-0 bg-black text-white p-2 rounded-full cursor-pointer text-[10px]">
+                    📸<input type="file" id="pfp-upload" class="hidden" onchange="uploadPFP()">
+                </label>
+            </div>
+            <div class="space-y-3 text-left mt-4">
+                <div><label class="text-[9px] font-black opacity-30 ml-2">FULL NAME</label><input type="text" id="upd-name" class="w-full p-4 bg-gray-50 text-[11px]"></div>
+                <div><label class="text-[9px] font-black opacity-30 ml-2">PHONE NUMBER</label><input type="text" id="upd-phone" class="w-full p-4 bg-gray-50 text-[11px]"></div>
+                <div><label class="text-[9px] font-black opacity-30 ml-2">GMAIL ADDRESS</label><input type="email" id="upd-email" class="w-full p-4 bg-gray-50 text-[11px]"></div>
+            </div>
+            <button onclick="updateProfile()" class="w-full bg-black text-white py-5 rounded-3xl font-black text-[11px] uppercase mt-6">Update Profile</button>
+            <button onclick="logout()" class="w-full text-red-500 font-black text-[10px] uppercase mt-4">Logout Account</button>
+            <button onclick="closeModal('profileModal')" class="mt-4 text-[9px] font-black opacity-20 uppercase block mx-auto">Cancel</button>
         </div>
     </div>
 
-    <div id="authModal" class="modal">
-        <div class="portal-card">
-            <h2 id="auth-title" class="text-2xl font-black uppercase mb-6 text-center">Join Smile MC</h2>
-            <div id="signup-fields" class="space-y-3">
-                <input type="text" id="reg-name" placeholder="FULL NAME" class="w-full bg-gray-50">
-                <input type="text" id="reg-phone" placeholder="PHONE NUMBER" class="w-full bg-gray-50">
-            </div>
-            <div class="space-y-3 mt-3">
-                <input type="email" id="auth-email" placeholder="GMAIL ADDRESS" class="w-full bg-gray-50">
-                <input type="password" id="auth-pass" placeholder="PASSWORD" class="w-full bg-gray-50">
-                <button onclick="handleAuth()" class="w-full bg-black text-white py-5 rounded-3xl font-black text-[11px] uppercase mt-4">Continue</button>
-                <p onclick="toggleAuthMode()" id="auth-toggle" class="text-[10px] font-bold text-center cursor-pointer opacity-50 uppercase mt-6">Already have an account? Sign In</p>
-            </div>
+    <header class="p-6 md:px-12 flex items-center justify-between sticky top-0 bg-white z-50">
+        <div class="flex items-center">
+            <div id="global-back-btn" onclick="showPage('home')" class="hidden cursor-pointer text-2xl font-black mr-4">←</div>
+            <h1 class="brand-logo">SMILE MC 👑</h1>
         </div>
-    </div>
-
-    <div id="checkoutModal" class="modal">
-        <div class="portal-card">
-            <h2 class="text-xl font-black uppercase mb-4">Finalize Order</h2>
-            <div class="space-y-3">
-                <input type="text" id="order-ign" placeholder="MINECRAFT IGN" class="w-full bg-gray-50">
-                <input type="text" id="order-discord" placeholder="DISCORD USERNAME" class="w-full bg-gray-50">
-                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                    <p class="text-[9px] font-black text-blue-500 uppercase">Payment (Easypaisa)</p>
-                    <p class="font-bold text-sm">Tehmina Ahtisham</p>
-                    <p class="text-xl font-black tracking-tighter">03106723295</p>
-                </div>
-                <button onclick="completeOrder()" class="w-full bg-black text-white py-5 rounded-3xl font-black text-[11px] uppercase">I Have Paid</button>
-                <button onclick="closeModal('checkoutModal')" class="w-full text-[9px] font-black opacity-30 uppercase mt-2">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <header class="p-6 flex items-center justify-between sticky top-0 bg-white/90 backdrop-blur-md z-50">
-        <h1 class="text-2xl font-black uppercase italic tracking-tighter">Smile MC 👑</h1>
-        <div id="header-user" onclick="openProfile()" class="hidden cursor-pointer">
-            <img id="header-pfp" src="" class="w-10 h-10 rounded-full border-2 border-black object-cover">
+        <div id="nav-user-pfp-trigger" onclick="openProfile()" class="hidden cursor-pointer">
+            <img id="header-pfp" src="" class="w-10 h-10 rounded-full border-2 border-black">
         </div>
     </header>
 
-    <main class="p-6 max-w-7xl mx-auto">
+    <main class="p-6 md:px-12 max-w-7xl mx-auto">
         <section id="page-home">
-            <div class="mb-6">
-                <input type="text" id="search-input" oninput="filterItems()" placeholder="SEARCH RANKS..." class="w-full bg-gray-50 border-none p-5 text-[12px] font-bold">
-            </div>
             <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
         </section>
 
         <section id="page-admin" class="hidden">
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-blue-600 text-white p-6 rounded-[35px]">
-                    <p class="text-[9px] font-black uppercase opacity-60">Visitors</p>
-                    <p id="stat-visitors" class="text-3xl font-black italic">0</p>
-                </div>
-                <div class="bg-black text-white p-6 rounded-[35px]">
-                    <p class="text-[9px] font-black uppercase opacity-60">Accounts</p>
-                    <p id="stat-accounts" class="text-3xl font-black italic">0</p>
-                </div>
-            </div>
-            
-            <div class="flex gap-2 mb-8 overflow-x-auto no-scrollbar">
-                <button onclick="switchAdminTab('inventory')" class="bg-black text-white px-6 py-3 rounded-full text-[10px] font-black">STORE</button>
-                <button onclick="switchAdminTab('users')" class="bg-gray-100 px-6 py-3 rounded-full text-[10px] font-black">USERS</button>
+            <div class="flex gap-4 mb-10 overflow-x-auto pb-2 no-scrollbar">
+                <button onclick="switchAdminTab('inventory')" class="adm-btn bg-black text-white px-8 py-3 rounded-full text-[10px] font-black uppercase">Store</button>
+                <button onclick="switchAdminTab('orders')" class="adm-btn bg-gray-100 px-8 py-3 rounded-full text-[10px] font-black uppercase">Orders</button>
+                <button onclick="switchAdminTab('users')" class="adm-btn bg-gray-100 px-8 py-3 rounded-full text-[10px] font-black uppercase">All Users</button>
             </div>
 
-            <div id="tab-inventory">
-                <div class="bg-gray-50 p-6 rounded-[30px] mb-6">
-                    <input type="text" id="p-name" placeholder="PRODUCT NAME" class="w-full mb-2">
-                    <input type="number" id="p-price" placeholder="PRICE" class="w-full mb-2">
-                    <input type="file" id="p-file" class="text-[10px] mb-4">
-                    <button onclick="uploadProduct()" class="w-full bg-black text-white py-4 rounded-2xl font-black">POST ITEM</button>
+            <div id="tab-inventory" class="adm-tab">
+                <div class="bg-gray-50 p-8 rounded-[40px] mb-8">
+                    <h3 id="adm-form-title" class="text-[11px] font-black uppercase mb-4">Post New Product</h3>
+                    <input type="hidden" id="edit-product-id">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <input type="text" id="p-name" placeholder="PRODUCT NAME" class="w-full p-4 bg-white text-[11px]">
+                        <input type="number" id="p-price" placeholder="PRICE" class="w-full p-4 bg-white text-[11px]">
+                        <div id="p-file-container">
+                             <input type="file" id="p-file" class="text-[10px] p-2">
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="handlePublish()" id="publish-btn" class="flex-1 bg-black text-white p-4 rounded-2xl font-black text-[11px] uppercase">Submit</button>
+                            <button onclick="cancelEdit()" id="cancel-edit-btn" class="hidden bg-gray-200 text-black px-6 rounded-2xl font-black text-[10px]">X</button>
+                        </div>
+                    </div>
                 </div>
-                <div id="admin-product-list" class="space-y-2"></div>
+                <div id="inventory-list" class="grid gap-3"></div>
             </div>
-            <div id="tab-users" class="hidden grid gap-4"></div>
+
+            <div id="tab-orders" class="adm-tab hidden space-y-4"></div>
+            <div id="tab-users" class="adm-tab hidden space-y-4"></div>
         </section>
     </main>
 
-    <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white rounded-[40px] p-5 flex justify-around items-center z-50 shadow-2xl border border-gray-100">
-        <div onclick="showPage('home')" class="text-center cursor-pointer">🏠<p class="text-[8px] font-black uppercase mt-1">Store</p></div>
-        <div onclick="openProfile()" class="text-center cursor-pointer">👤<p class="text-[8px] font-black uppercase mt-1">Account</p></div>
-        <div onclick="openModal('staffModal')" class="text-center cursor-pointer">🛡️<p class="text-[8px] font-black uppercase mt-1">Staff</p></div>
+    <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-black text-white rounded-[40px] p-6 flex justify-around items-center z-50">
+        <div onclick="showPage('home')" class="cursor-pointer text-center">🏠<p class="text-[8px] font-black uppercase mt-1">Store</p></div>
+        <div id="profile-nav-btn" onclick="openProfile()" class="cursor-pointer text-center">⚙️<p class="text-[8px] font-black uppercase mt-1">Profile</p></div>
+        <div onclick="promptAdmin()" class="cursor-pointer text-center">🛡️<p class="text-[8px] font-black uppercase mt-1">Staff</p></div>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, getDoc, setDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, getDoc, setDoc, deleteDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut, updateEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC41Y6mNNBFvjNeHdOOWGsjczMjyaqoqjU",
@@ -151,9 +114,7 @@
         const auth = getAuth(app);
 
         let currentUser = null;
-        let isSignUp = true;
-        let selectedProduct = "";
-        let masterItems = [];
+        let isEditingProduct = false;
 
         window.showAlert = (msg) => {
             const el = document.getElementById('custom-alert');
@@ -161,118 +122,134 @@
             setTimeout(() => el.style.display = "none", 3000);
         };
 
-        // BUY NOW LOGIC
-        window.buyNow = (name) => {
-            if(!currentUser) { showAlert("Please Login First"); openModal('authModal'); return; }
-            selectedProduct = name;
-            openModal('checkoutModal');
+        // ADMIN: EDIT PRODUCT
+        window.startEditProduct = (id, name, price) => {
+            isEditingProduct = true;
+            document.getElementById('adm-form-title').innerText = "Edit Product Details";
+            document.getElementById('p-name').value = name;
+            document.getElementById('p-price').value = price;
+            document.getElementById('edit-product-id').value = id;
+            document.getElementById('p-file-container').style.display = 'none';
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
         };
 
-        window.completeOrder = async () => {
-            const ign = document.getElementById('order-ign').value;
-            const discord = document.getElementById('order-discord').value;
-            if(!ign || !discord) return showAlert("Fill all fields");
-            
-            showAlert("Order Placed!");
-            closeModal('checkoutModal');
-            setTimeout(() => window.open("https://wa.me/923706116030", "_blank"), 1000);
+        window.cancelEdit = () => {
+            isEditingProduct = false;
+            document.getElementById('adm-form-title').innerText = "Post New Product";
+            document.getElementById('p-name').value = "";
+            document.getElementById('p-price').value = "";
+            document.getElementById('p-file-container').style.display = 'block';
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
         };
 
-        // STAFF PORTAL
-        window.checkStaffKey = () => {
-            if(document.getElementById('staff-key-input').value === "GHOSTYDEVELOPER") {
-                closeModal('staffModal'); showPage('admin'); loadAdminData();
-            } else { showAlert("Wrong Staff Key"); }
+        window.handlePublish = async () => {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            if(isEditingProduct) {
+                const id = document.getElementById('edit-product-id').value;
+                await updateDoc(doc(db, "products", id), { name, price });
+                showAlert("Product Updated!");
+                cancelEdit();
+            } else {
+                const file = document.getElementById('p-file').files[0];
+                const fd = new FormData(); fd.append("image", file);
+                const r = await fetch("https://api.imgbb.com/1/upload?key=a107d2f7b3059bbb23a1b6e9f61153c7", { method: "POST", body: fd });
+                const d = await r.json();
+                await addDoc(collection(db, "products"), { name, price, image: d.data.url, createdAt: serverTimestamp() });
+                showAlert("Product Live!");
+            }
         };
 
-        // ADMIN LOADER
-        function loadAdminData() {
-            onSnapshot(doc(db, "stats", "visitors"), d => document.getElementById('stat-visitors').innerText = d.data()?.count || 0);
-            onSnapshot(collection(db, "users"), s => {
-                document.getElementById('stat-accounts').innerText = s.size;
-                document.getElementById('tab-users').innerHTML = s.docs.map(d => {
+        // USER: FULL PROFILE UPDATE
+        window.updateProfile = async () => {
+            const newName = document.getElementById('upd-name').value;
+            const newPhone = document.getElementById('upd-phone').value;
+            const newEmail = document.getElementById('upd-email').value;
+
+            try {
+                if(newEmail !== currentUser.email) { await updateEmail(auth.currentUser, newEmail); }
+                await updateDoc(doc(db, "users", currentUser.uid), { name: newName, phone: newPhone, email: newEmail });
+                showAlert("Profile Fully Updated!");
+                closeModal('profileModal');
+            } catch (e) { showAlert(e.message); }
+        };
+
+        // ADMIN: LOAD USERS
+        function loadAdmin() {
+            onSnapshot(collection(db, "users"), snap => {
+                document.getElementById('tab-users').innerHTML = snap.docs.map(d => {
                     const u = d.data();
-                    return `<div class="bg-gray-50 p-5 rounded-3xl">
-                        <p class="text-[11px] font-black uppercase">${u.name}</p>
-                        <p class="text-[9px] opacity-40">${u.email} | ${u.phone}</p>
-                        <p class="text-red-500 font-black text-[10px] mt-2">PASS: ${u.password}</p>
+                    return `<div class="bg-gray-50 p-6 rounded-[30px] border border-gray-100">
+                        <div class="flex items-center gap-4 mb-3">
+                            <img src="${u.pfp || 'https://ui-avatars.com/api/?name='+u.name}" class="w-12 h-12 rounded-full border-2 border-black">
+                            <div><p class="text-[12px] font-black uppercase">${u.name}</p><p class="text-[9px] opacity-40">UID: ${d.id}</p></div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-1 text-[10px] font-bold">
+                            <p class="text-blue-600">GMAIL: ${u.email}</p>
+                            <p>PHONE: ${u.phone}</p>
+                            <p class="text-red-500 bg-red-50 p-2 rounded-lg mt-2">PASSWORD: ${u.password}</p>
+                        </div>
+                    </div>`;
+                }).join('');
+            });
+
+            onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+                document.getElementById('inventory-list').innerHTML = snap.docs.map(d => {
+                    const p = d.data();
+                    return `<div class="bg-white p-4 rounded-2xl border flex justify-between items-center">
+                        <p class="text-[10px] font-black uppercase">${p.name} - Rs.${p.price}</p>
+                        <div class="flex gap-2">
+                            <button onclick="startEditProduct('${d.id}', '${p.name}', '${p.price}')" class="text-blue-500 font-black text-[8px]">EDIT</button>
+                            <button onclick="deleteDoc(doc(db, 'products', '${d.id}'))" class="text-red-500 font-black text-[8px]">DEL</button>
+                        </div>
                     </div>`;
                 }).join('');
             });
         }
 
-        // STORE RENDER
-        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
-            masterItems = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            renderGrid(masterItems);
-            document.getElementById('admin-product-list').innerHTML = masterItems.map(p => `
-                <div class="bg-white p-3 border rounded-xl flex justify-between items-center">
-                    <p class="text-[10px] font-bold">${p.name}</p>
-                    <button class="text-red-500 font-black text-[9px]">DELETE</button>
-                </div>`).join('');
-        });
-
-        function renderGrid(items) {
-            document.getElementById('product-grid').innerHTML = items.map(p => `
-                <div class="bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm">
-                    <img src="${p.image}" class="w-full aspect-square object-cover">
-                    <div class="p-5">
-                        <p class="text-[10px] font-black uppercase opacity-30">${p.name}</p>
-                        <p class="text-xl font-black mb-4">Rs.${p.price}</p>
-                        <button onclick="buyNow('${p.name}')" class="buy-btn">Buy Now</button>
-                    </div>
-                </div>`).join('');
-        }
-
-        window.filterItems = () => {
-            const q = document.getElementById('search-input').value.toLowerCase();
-            renderGrid(masterItems.filter(i => i.name.toLowerCase().includes(q)));
-        };
-
-        // AUTH SYSTEM
+        // Standard helpers (Auth State, Popups, etc.)
         onAuthStateChanged(auth, async user => {
             if(user) {
                 currentUser = user;
                 const d = (await getDoc(doc(db, "users", user.uid))).data();
-                document.getElementById('header-pfp').src = d?.pfp || `https://ui-avatars.com/api/?name=${d?.name}&background=000&color=fff`;
-                document.getElementById('header-user').classList.remove('hidden');
-            }
+                const pfp = d?.pfp || `https://ui-avatars.com/api/?name=${d?.name}&background=000&color=fff`;
+                document.getElementById('header-pfp').src = pfp; document.getElementById('user-pfp').src = pfp;
+                document.getElementById('nav-user-pfp-trigger').classList.remove('hidden');
+                document.getElementById('upd-name').value = d?.name; document.getElementById('upd-phone').value = d?.phone; document.getElementById('upd-email').value = user.email;
+            } else { location.reload(); }
         });
 
-        window.handleAuth = async () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-pass').value;
-            try {
-                if(isSignUp) {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await setDoc(doc(db, "users", res.user.uid), {
-                        name: document.getElementById('reg-name').value,
-                        phone: document.getElementById('reg-phone').value,
-                        email, password: pass, pfp: ""
-                    });
-                } else { await signInWithEmailAndPassword(auth, email, pass); }
-                closeModal('authModal'); showAlert("Welcome!");
-            } catch(e) { showAlert(e.message); }
-        };
-
-        // TRACKING
-        const track = async () => { await setDoc(doc(db, "stats", "visitors"), { count: increment(1) }, { merge: true }); };
-
-        // UI
+        window.openProfile = () => openModal('profileModal');
+        window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
+        window.openModal = id => document.getElementById(id).classList.add('active-modal');
         window.showPage = id => {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(`page-${id}`).classList.remove('hidden');
+            document.getElementById('global-back-btn').style.display = (id === 'home') ? 'none' : 'block';
         };
-        window.openModal = id => document.getElementById(id).classList.add('active-modal');
-        window.closeModal = id => document.getElementById(id).classList.remove('active-modal');
-        window.openProfile = () => currentUser ? showAlert("Profile Feature Coming Soon") : openModal('authModal');
-        window.toggleAuthMode = () => { isSignUp = !isSignUp; document.getElementById('auth-title').innerText = isSignUp ? "Join Smile MC" : "Welcome Back"; };
+        window.promptAdmin = () => { if(prompt("Key:") === "GHOSTYDEVELOPER") { showPage('admin'); loadAdmin(); } };
+        window.logout = () => signOut(auth);
         window.switchAdminTab = t => {
-            document.getElementById('tab-inventory').classList.toggle('hidden', t !== 'inventory');
-            document.getElementById('tab-users').classList.toggle('hidden', t !== 'users');
+            document.querySelectorAll('.adm-tab').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`tab-${t}`).classList.remove('hidden');
         };
 
-        track();
+        // Load Products for Grid
+        onSnapshot(query(collection(db, "products"), orderBy("createdAt", "desc")), snap => {
+            document.getElementById('product-grid').innerHTML = snap.docs.map(d => {
+                const p = d.data();
+                return `<div class="bg-white rounded-[40px] border border-gray-100 overflow-hidden shadow-sm">
+                    <img src="${p.image}" class="w-full aspect-square object-cover">
+                    <div class="p-5">
+                        <p class="text-[10px] font-black uppercase opacity-20">${p.name}</p>
+                        <p class="text-xl font-black mb-4">Rs.${p.price}</p>
+                        <button onclick="showAlert('Checking...')" class="w-full py-4 bg-black text-white rounded-2xl text-[9px] font-black uppercase tracking-widest">Buy Now</button>
+                    </div>
+                </div>`;
+            }).join('');
+        });
+
+        showPage('home');
     </script>
 </body>
 </html>
